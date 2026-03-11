@@ -1,0 +1,14 @@
+,term,arg_type,ret_type,type_string,ctype,count,is_init,comp_lp,adaptor_lp,log_prob,frame,depth
+0,note_1,,note,->note,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+1,note_2,,note,->note,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+2,note_3,,note,->note,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+3,note_4,,note,->note,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+4,note_5,,note,->note,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+5,note_6,,note,->note,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+6,count_1,,count,->count,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+7,count_2,,count,->count,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+8,count_3,,count,->count,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+9,count_4,,count,->count,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+10,count_5,,count,->count,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+11,count_6,,count,->count,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
+12,memorize,note,note,note->note,primitive,1,1,-1.9459101490553135,0,-1.9459101490553135,,0

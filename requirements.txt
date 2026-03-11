@@ -1,0 +1,40 @@
+# Core scientific
+numpy>=1.23
+scipy>=1.10
+pandas>=2.0
+matplotlib>=3.7
+seaborn>=0.13
+scikit-learn>=1.2
+statsmodels>=0.14
+numba>=0.58
+
+# Deep learning
+torch>=2.1.0
+torchaudio>=2.1.0
+
+# Audio / music
+librosa>=0.10
+pretty-midi
+pydub
+mido
+midi2audio
+mir_eval
+
+# Probabilistic programming
+pyro-ppl>=1.8
+pymc
+arviz
+
+# Utilities
+tqdm
+networkx
+toolz
+multipledispatch
+logical-unification
+minikanren
+textdistance
+
+# Development
+pytest
+jupyter
+ipdb
