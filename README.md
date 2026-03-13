@@ -58,30 +58,54 @@ Python 3.8 is required. PyTorch 2.1 with CPU support is sufficient for all simul
 ### 1. Build the primitive model
 
 ```bash
-python scripts/0_construct_pm.py --task melody
+cs scripts
+python 0_construct_pm.py --task melody
 ```
 
 ### 2. Generate program frames
 
 ```bash
-python scripts/1_construct_frame.py --task melody --frame_num 20 --max_depth 5
+cd scripts
+python 1_construct_frame.py --task melody --frame_num 20 --max_depth 5
 ```
 
 ### 3. Run compression (choose one)
 
 ```bash
 # Normative (optimal) DP — PCFG
-python scripts/2_normative_dp.py --curriculum pcfg --beta 1.0 \
-    --save_path results/ --experiname pcfg_run --task_num 50
+cd scripts
+python 2_normative_dp.py --curriculum pcfg \
+    --save_path results/ --experiname pcfg_run --task_num 50 \
+    --search_budget 20 --melody_backtrack_budget 0 --beta 1.0 \
+    --folder_name "['beta', 'global_alpha', 'random_seed']"
+
+# Greedy DP — Adaptor Grammar
+cd scripts
+python 3_compress_dp.py --curriculum count_ag \
+    --save_path results/ --experiname ag_run --task_num 50 \
+    --lib_size 10000 --search_budget 5 --melody_backtrack_budget 1 --submelody_backtrack_budget 2 --beta 1.0 \
+    --folder_name "['beta', 'global_alpha', 'random_seed']"
 
 # Greedy DP — Hierarchical Adaptor Grammar
-python scripts/3_compress_dp.py --curriculum hier_ag --beta 1.0 \
+cd scripts
+python 3_compress_dp.py --curriculum hier_ag \
     --save_path results/ --experiname hag_run --task_num 50 \
-    --lib_size 10000 --max_submelody_length 1
+    --lib_size 10000 --search_budget 5 --melody_backtrack_budget 1 --submelody_backtrack_budget 2 --beta 1.0 \
+    --folder_name "['beta', 'global_alpha', 'local_alpha', 'random_seed']"
 
-# Chunk / RLE baselines
-python scripts/3_compress_baseline.py --curriculum chunk --beta 1.0 \
-    --save_path results/ --experiname chunk_run --task_num 50
+# Chunk baselines
+cd scripts
+python 3_compress_baseline.py --curriculum chunk \
+    --save_path results/ --experiname chunk_run --task_num 50 \
+    --lib_size 10000 --search_budget 5 --melody_backtrack_budget 0 --submelody_backtrack_budget 2 --beta 1.0 \
+    --folder_name "['beta', 'random_seed']"
+
+# RLE baselines
+cd scripts
+python 3_compress_baseline.py --curriculum rle --mem 0 \
+    --save_path results/ --experiname rle_run --task_num 50 \
+    --lib_size 10000 --search_budget 1 --melody_backtrack_budget 0 --submelody_backtrack_budget 1 --beta 1.0 \
+    --folder_name "['beta', 'random_seed']"
 ```
 
 ### 4. Evaluate on held-out tasks

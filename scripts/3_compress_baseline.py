@@ -81,6 +81,14 @@ def parse_arguments() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--melody_backtrack_budget",
+        type=int,
+        help=(
+            "Outer backtracking window: how many previous melodies are "
+            "reconsidered when updating the library (AG/HAG only)."
+        ),
+    )
+    parser.add_argument(
         "--submelody_backtrack_budget",
         type=int,
         help="Inner backtracking window size in notes (0 = no backtracking).",
@@ -90,6 +98,19 @@ def parse_arguments() -> argparse.Namespace:
         type=int,
         default=10000,
         help="Maximum number of entries in the program library.",
+    )
+    # Pitman-Yor process parameters (global level)
+    parser.add_argument(
+        "--global_alpha",
+        type=float,
+        default=1.0,
+        help="Concentration parameter for the global Pitman-Yor process.",
+    )
+    parser.add_argument(
+        "--global_d",
+        type=float,
+        default=0.2,
+        help="Discount parameter for the global Pitman-Yor process (0 ≤ d < 1).",
     )
 
     # ---- Task range --------------------------------------------------------
@@ -130,7 +151,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--folder_name",
         type=str,
-        default="['beta', 'random_seed', 'local_alpha']",
+        default="['beta', 'random_seed', 'global_alpha']",
         help=(
             "Python list literal of argument names whose values are used to "
             "construct the leaf folder name."
@@ -185,7 +206,7 @@ def main() -> None:
     print(args, flush=True)
 
     # Load melody train tasks
-    base_path = "../data/melody"
+    base_path = "../data/primitive"
     task_path = "../data/task/train_notes_wo_break_104.obj"
     task_data = prepare_task_data(task_path, args.random_seed, args.random_seq)
 
@@ -217,10 +238,6 @@ def main() -> None:
             "note_count_note->note",
         ]
 
-    # Both baselines use the AG compressor with no inter-melody backtracking
-    args.global_alpha = 1.0
-    args.global_d = 0.2
-    args.max_melody_num = 0
     program_lib = AdaGrammar(
         production=init_pm,
         lib_size=args.lib_size,

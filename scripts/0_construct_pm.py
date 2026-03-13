@@ -17,7 +17,7 @@ def main():
     parser.add_argument(
         "--task",
         type=str,
-        default="melody",
+        default="primitive",
         help="Task name.",
     )
     parser.add_argument(

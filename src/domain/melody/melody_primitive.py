@@ -340,7 +340,7 @@ class MelodyProgram(Program):
             double-quoted.
         """
         quoted_string = re.sub(
-            r'"(?<![\'\""])([a-zA-Z_][a-zA-Z_0-9]*)(?![\'\""])"', r'"\1"', nested_string
+            r'(?<![\'\""])([a-zA-Z_][a-zA-Z_0-9]*)(?![\'\""])', r'"\1"', nested_string
         )
         return quoted_string
 

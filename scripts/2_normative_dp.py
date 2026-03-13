@@ -14,9 +14,9 @@ import sys
 
 sys.path.append("../")
 
-import argparse
 import os
 import random
+import argparse
 from typing import Tuple
 
 import numpy as np
@@ -24,6 +24,7 @@ import pandas as pd
 
 from src.program.grammar import *
 from src.domain.melody.melody_primitive import *
+from src.utils.general import extract_obj, create_save_path, prepare_task_data
 
 
 # ---------------------------------------------------------------------------
@@ -311,13 +312,13 @@ def main() -> None:
     full_folder_path = create_save_path(args)
 
     # Load primitive production table and initialise grammar + compressor
-    init_pm = pd.read_csv("../data/melody/task_pm.csv", index_col=0, na_filter=False)
+    init_pm = pd.read_csv("../data/primitive/task_pm.csv", index_col=0, na_filter=False)
     _, compressor = initialize_program_library(args.curriculum, init_pm, args)
 
     # Pre-load sampled program frames if frame_gen == "sample";
     frames = (
         [
-            pd.read_csv(f"../data/melody/task_frames_{i}.csv", index_col=0)
+            pd.read_csv(f"../data/primitive/task_frames_{i}.csv", index_col=0)
             for i in range(1, args.frame_depth + 1)
         ]
         if args.frame_gen == "sample"

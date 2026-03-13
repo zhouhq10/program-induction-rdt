@@ -279,7 +279,7 @@ def main() -> None:
     print(args, flush=True)
 
     # Load melody train tasks
-    base_path = "../data/melody"
+    base_path = "../data/primitive"
     task_path = "../data/task/train_notes_wo_break_104.obj"
     task_data = prepare_task_data(task_path, args.random_seed, args.random_seq)
 
