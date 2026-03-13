@@ -77,7 +77,7 @@ cd scripts
 python 2_normative_dp.py --curriculum pcfg \
     --save_path results/ --experiname pcfg_run --task_num 50 \
     --search_budget 20 --melody_backtrack_budget 0 --beta 1.0 \
-    --folder_name "['beta', 'global_alpha', 'random_seed']"
+    --folder_name "['beta', 'random_seed']"
 
 # Greedy DP — Adaptor Grammar
 cd scripts
