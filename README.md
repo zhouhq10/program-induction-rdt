@@ -35,22 +35,19 @@ program-induction-rdt/
 ---
 
 ## Installation
+Python 3.8 is required.
 
-**Option A — conda (recommended):**
+We recommend creating a clean conda environment first:
 
 ```bash
-conda env create -f environment.yml
+conda create -n rdt python=3.8 -y
 conda activate rdt
 ```
 
-**Option B — pip:**
-
+Then install the package from the project root (where the `pyproject.toml` lives):
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
-
-Python 3.8 is required. PyTorch 2.1 with CPU support is sufficient for all simulations (no GPU needed).
-
 ---
 
 ## Quickstart
