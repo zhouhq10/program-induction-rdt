@@ -2,6 +2,9 @@
 
 This repository contains the simulation code for the paper. We model how humans learn and recall melody sequences using **program induction** under a **rate-distortion** (RD) framework. The model finds symbolic program representations of melodies that trade off description length (rate) against reconstruction error (distortion), using Probabilistic Context-Free Grammars (PCFG), Adaptor Grammars (AG), and Hierarchical Adaptor Grammars (HAG).
 
+> 🎵 **Try the experiment demo:** [**Play the melody-learning task in your browser →**](https://zhouhq10.github.io/program-induction-rdt/chirp-demo/)
+> This is the actual online experiment participants completed (preview mode — no data is saved).
+
 ---
 
 ## Overview

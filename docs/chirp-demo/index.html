@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Prediction Experiment</title>
+    <link rel="stylesheet" href="./src/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+<!--  consent page""""""""""""""""""""""" -->
+<div id="main_page" >
+    <h3><center>Thank you for choosing us, and welcome to our <b>Chirp Champions</b> game.<center></h3>
+    <h3><center>A bird will instruct you to remember and recall a sequence of melody notes.<center></h3>
+
+        <h4>Study Information</h4>
+        Please read the following information carefully. Your participation in this research is voluntary. It is your choice whether to participate or not. Please do not hesitate to write to us at <b>hanqi[dot]zhou[at]uni-tuebingen[dot]de</b> if you have any further questions regarding the study.
+
+        <h4>1. Purpose</h4>
+         This is a sequence learning game where you need to remember a sequence of symbols (e.g., music notes), recall them and predict new ones. Note that you DO NOT NEED headphones or speakers to participate. Every sequence will be shown visually. 
+        To be eligible to participate, you <b>MUST</b> meet the following criteria:
+        
+        <ul>
+            <li>You can read and understand English fluently.</li>
+            <li>You have not previously participated in this experiment.</li>
+        </ul>
+
+        <h4>2. Procedure</h4>
+        This study will take about 30 minutes. It will consist of the following steps:
+        <ul>
+            <li>You will be introduced to the game, and you will get to <b>try it out</b>.</li>
+            <li>We will check whether you have correctly understood the game by <b> asking you some questions</b>.</li>
+            <li>You will <b>play</b> the game and try to <b>earn the bonus!</b></li>
+            <li>You will complete a short <b>questionnaire</b> after the experiment.</li>
+        </ul>
+        
+        <h4>3. Compensation</h4>
+        You will receive £4.00 for your participation. You will also receive a <b>bonus payment of up to £4.00</b> based on your performance in the experiment.
+        <h4>4. Data protection</h4>
+        Once we have awarded you your bonus payment, your Prolific ID will be deleted from the study data. The experiment
+        data will be stored under a randomly assigned participant number on a server at the University of Tübingen. This
+        means that it will become impossible to link the study data to you. All data collected during this study will be
+        treated confidentially and all individuals with access to your personal data are obliged to maintain data secrecy.
+        We are not responsible for the handling of your personal data through the Prolific platform.<br>
+      
+        The study data may also be made publicly accessible via research databases or scientific publications (typically via
+        the internet). This makes it possible for other researchers to check or replicate the results and enhances the
+        quality of scientific research. The study data may also be used for new research questions going beyond the purposes
+        of this particular study. The data is stored anonymously, treated confidentially, and used only for scientific
+        purposes. You are free to withdraw, in which case recorded data will not be used (cf. point 6). <br>
+        <h4>5. Voluntary participation</h4>
+        Your participation in this research is entirely voluntary. There will be no repercussions when canceling your
+        participation.
+        <h4>6. Right to refuse or withdraw</h4>
+        You do not have to take part in this study if you do not wish to do so. You are free to withdraw your consent and do
+        not need to provide a reason for your withdrawal. Participants who drop out of the study for any reason (e.g.,
+        technical issues) are eligible for full or partial compensation. Please contact
+        hanqi[dot]zhou[at]uni-tuebingen[dot]de and include a screenshot of the experiment website if possible. If you withdraw from the study before data collection is completed, your data will not be used. If you withdraw from the
+        study after completing the study, but before bonus payments have been processed, you can request the deletion of
+        your data. After the processing of bonus payments, your Prolific ID will be removed from the study data and it will
+        be fully anonymized, making it not possible to link you with your data.
+        <h4>7. Risks</h4>
+        Your participation does not involve any physical or emotional risk to you. You are free to withdraw at any time.
+        <h4>8. Insurance coverage</h4>
+        Not necessary for participating in this study.
+        <h4>9. Responsible contact</h4>
+        If you have questions or if there are any problems, please contact <b>hanqi[dot]zhou[at]uni-tuebingen[dot]de</b>.
+        You can also use this email to request the withdrawal of your data.
+        <h4>Consent</h4>
+        <p>By clicking on the button below, you agree to the following:</p>
+
+        <ul>
+            <li><b>I have read and understood the conditions outlined above. I consent to participate in the study and agree
+                to the collection, storage, and use of my data as described above.</b> </li>
+          </ul>
+        
+          <button type="button" class="btn btn-secondary" name="button" id="Continue_button" onclick="pageSwitcher('main_page','Instruction1')" 
+          style="margin: 1%; display: flex; padding: 0.5% 1%; font-size: 150%;">I consent to participate</button>
+   
+        
+
+</div>
+
+
+
+<!-- """"""""""Instruction image""""""""""""""""""""" -->
+<div id="Instruction1" class="mt-5" style="display: flex; flex-direction: column;justify-content: start; align-items: start; height: 90vh; display: none;">
+    <!-- Main content container with row layout at the top -->
+    <div style="display: flex; flex-direction: row; align-items: flex-start;  max-width: 80%; justify-content: center; margin-top: 20px; flex-grow: 1;">
+        <!-- Image aligned to the left -->
+        <img src="./src/images/InsImage.png" alt="Instruction Image" style="max-width: 50%; height: auto; margin-right: 20px;">
+        
+        <!-- Text aligned to the right -->
+        <div style="text-align: left; max-width: 50%; font-size: 20px;">
+            Welcome to Chirp Champions, where every bird has a song and every song tells a story! <br><br>
+
+            You are a young bird in a vibrant, musical forest, eager to learn the enchanting songs of your community. Your bird teachers will guide you in learning the songs of the various birds species in your area. <br><br>
+
+            But don’t worry—you won’t need sound to play, the magic is all in the visuals! Can you rise to the top and become the ultimate chirp champion?
+
+           <br> You can always press <b>'SPACE'</b> to continue
+        </div>
+    </div>
+
+    <!-- Button positioned at the bottom of the div -->
+   <!-- Button container positioned at 80% from the top -->
+   <div style="position: absolute; top: 80%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+    <button style="width: 120px; height: 40px; margin-bottom: 10px;" type="button" onclick="pageSwitcher('Instruction1','birdsInstruction')" class="btn btn-secondary">Continue</button>
+    <button style="width: 120px; height: 40px;" type="button" onclick="pageSwitcher('Instruction1','main_page')" class="btn btn-secondary">Go back</button>
+</div>
+</div>
+
+
+
+
+
+<!-- """"""""""Instruction2 """""""""""""""""""""""""""" -->
+
+<div id="birdsInstruction" class="mt-5" style="display: flex; flex-direction: column;justify-content: start; align-items: start; height: 90vh; display: none;">
+    <div style="display: flex; flex-direction: row; align-items: center;   max-width: 80%; justify-content: center; margin-top: 20px; flex-grow: 1;">
+        <img src="./src/images/Birds.png"  alt="Instruction Image"style="max-width: 40%; height: auto; margin-right: 20px;">
+        <div style="text-align: left;  width: 60%; font-size: 20px;">
+            <h3 class="mx-4" style="font-size: 20px;">You will have five bird teachers, each teaching you a different song. 
+            </h3> 
+        </div>
+    </div>  
+
+    <div style="position: absolute; top: 80%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button" onclick="pageSwitcher('birdsInstruction','Instruction3')" class="btn btn-secondary my-2">Continue</button>
+        <button style="width: 120px; height: 40px;" type="button" onclick="pageSwitcher('birdsInstruction','Instruction1')" class="btn btn-secondary">Go back</button>
+    </div>
+
+</div>
+
+
+<!-- """""""""""""""""Instruction3" -->
+<div id="Instruction3" class="mt-5" style="display: flex; flex-direction: column; justify-content: start; align-items: start; height: 90vh; display: none;">
+    <div style="display: flex; flex-direction: row; align-items: center;   max-width: 80%; justify-content: center; margin-top: 20px; flex-grow: 1;">
+        <img src="./src/images/InsImage.png" alt="Instruction Image" style="width: 450px; height: auto; margin-right: 20px;">
+        <div style="text-align: left; width: 50rem; font-size: 20px;">
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">You will have five bird teachers, each teaching you a different song. 
+            </h3> 
+            <h3 class="mx-4" style="font-size: 20px;">Each song will be split into five parts.
+            </h3>
+        </div>
+    </div>  
+
+    <!-- Flexbox container for buttons -->
+    <div style="position: absolute; top: 80%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button" onclick="pageSwitcher('Instruction3','Instruction4')" class="btn btn-secondary my-2">Continue</button>
+        <button style="width: 120px; height: 40px;" type="button" onclick="pageSwitcher('Instruction3','birdsInstruction')" class="btn btn-secondary">Go back</button>
+    </div>
+</div>
+
+<!-- """""""""""""""""Instruction4" -->
+<div id="Instruction4" class="mt-5" style="display: flex; flex-direction: column; justify-content: start; align-items: start; height: 90vh; display: none;">
+    <div style="display: flex; flex-direction: row; align-items:center;  max-width: 80%; justify-content: center; margin-top: 20px; flex-grow: 1;">
+        <img src="./src/images/InsImage.png" alt="Instruction Image" style="width: 450px; height: auto; margin-right: 20px;">
+        <div style="text-align: left; width: 50rem; font-size: 20px;">
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">ou will have five bird teachers, each teaching you a different song.</h3> 
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">Each song will be split into five parts.</h3>
+            <h3 class="mx-4" style="font-size: 20px;">For each part, you will go through two phases: <b>learning</b> and <b>memory</b>.</h3>
+        </div>
+    </div>  
+
+    <!-- Buttons centered -->
+    <div style="position: absolute; top: 80%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button" onclick="pageSwitcher('Instruction4','Instruction5')" class="btn btn-secondary my-2">Continue</button>
+        <button style="width: 120px; height: 40px;" type="button" onclick="pageSwitcher('Instruction4','Instruction3')" class="btn btn-secondary">Go back</button>
+    </div>
+</div>
+
+
+<!-- """""""""""""""""Instruction5" -->
+<div id="Instruction5" class="mt-5" style="display: flex; flex-direction: column; justify-content: start; align-items: start; height: 90vh; display: none;">
+    <div style="display: flex; flex-direction: row; align-items: center;   max-width: 80%; width: 100%; justify-content: center; margin-top: 20px; flex-grow: 1;">
+        <img src="./src/images/InsImage.png" alt="Instruction Image" style="width: 450px; height: auto; margin-right: 20px;">
+        <div style="text-align: left;  width: 50rem; font-size: 20px;">
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">In total, you will learn 5 melodies from different birds</h3> 
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">For each melody, we split it into 5 parts</h3>
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">For each part, you will go through two phases: learning and memory.</h3>
+            <h3 class="mx-4" style="font-size: 20px;">Near the end of each song, you will have a special <b>completion</b> phase.</h3>
+        </div>
+    </div>  
+
+    <div style="position: absolute; top: 80%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button" onclick="pageSwitcher('Instruction5','Instruction6')" class="btn btn-secondary my-2">Continue</button>
+        <button style="width: 120px; height: 40px;" type="button" onclick="pageSwitcher('Instruction5','Instruction4')" class="btn btn-secondary">Go back</button>
+    </div>
+</div>
+<!-- """""""""""""""""Instruction6" -->
+<div id="Instruction6" class="mt-5" style="display: flex; flex-direction: column; justify-content: start; align-items: start; height: 90vh; display: none;">
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; max-width: 80%; margin-top: 20px; flex-grow: 1;">
+        <img src="./src/images/InsImage.png" alt="Instruction Image" style="width: 450px; height: auto; margin-right: 20px;">
+        <div style="text-align: left; width: 50rem; font-size: 20px;">
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">In total, you will learn 5 melodies from different birds</h3> 
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">For each melody, we split it into 5 parts</h3>
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">For each part, you will go through two phases:learning and memory.</h3>
+            <h3 class="mx-4" style="color: gray; opacity: 0.5; font-size: 20px;">Near the end of each song, you will have a special completion phase.</h3>
+            <h3 class="mx-4" style="font-size: 20px;">Now, we will give you a chance to try out each phase of the experiment! 
+            </h3>
+        </div>
+    </div>
+
+    <!-- Buttons centered -->
+    <div style="position: absolute; top: 80%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;">
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button" onclick="pageSwitcher('Instruction6','Instruction7')" class="btn btn-secondary my-2">Continue</button>
+        <button style="width: 120px; height: 40px;" type="button" onclick="pageSwitcher('Instruction6','Instruction5')" class="btn btn-secondary">Go back</button>
+    </div>
+</div>
+
+<!-- """""""""""""""""Instruction7""""""""""""""""""""""""""""" -->
+
+<div id="Instruction7" class="mt-2" style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; height: 95vh; display: none;">
+    
+    <h3 style="text-align: center;">Keyboard Finger positions</h3>
+    <p style="text-align: center;"> Only the letters <b>S, D, F, J, K, L</b> and space are valid key presses for our bird. <br>
+        Place your hands on the keyboard as shown below. Use one finger for each key. <br>
+        Once you have comfortably positioned your fingers, please do not move them during the task <br>
+    </p>
+       
+    
+    <img src="./src/images/keyboard.png" alt="Keyboard" style="align-items: center; margin-left: 2rem; max-width: 100%; height: 500px; width: 650px;">
+
+    <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; width: 100%; margin-top: auto;">
+        <button id="Ins7Button" style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction7','Instruction8')" class="btn btn-secondary my-2">Continue</button>
+        
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction7','Instruction6')"  class="btn btn-secondary">Go back</button>
+    </div>
+ </div>
+
+
+ <!-- Instruction 8  -->
+
+
+<div id="Instruction8" class="mt-5" style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; height: 100vh; display: none;">
+    
+    <h3 style="text-align: center;">Example Phase 1: Learning</h3> <br>
+    <p style="font-size: 20px;"> 
+        How does it work: <br>
+        <ul>
+            <li>A bird will show you which notes to play by dropping them one after another.</li>
+            <li>Press the corresponding note and get feedback. </li>
+        </ul>
+        Try hard to 
+        <ul>
+            <li>Respond accurately</li>
+            <li>Remember all notes in the right order</li>
+        </ul>
+        Your compensation in this phase is calculated using your accuracy score. <br>
+
+        On the next page you will try out an example.
+        
+    </p>
+       
+    
+
+
+    <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; width: 100%; margin-top: auto;">
+        <button id="Ins8Button" style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction8','instructionDemo')" class="btn btn-secondary my-2">Continue</button>
+        
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction8','Instruction7')"  class="btn btn-secondary">Go back</button>
+    </div>
+ </div>
+
+
+
+  <!-- Instruction 9 -->
+
+
+<div id="Instruction9" class="mt-5" style=" flex-direction: column; justify-content: space-between; align-items: center; height: 100vh; display: none;">
+   
+    <h3 style="text-align: center;">Example Phase 2: Memory</h3> <br>
+    <p style="font-size: 20px;">  
+        How does it work: <br>
+        <ul>
+            <li>A bird will provide a recap of the song you learned in the previous phase.  </li>
+            <li>Then, without any you will have to reproduce it as accurate as possible. </li>
+        </ul>
+        Try hard to 
+        <ul>
+            <li>Remember all notes in the correct order </li>
+            <li>Recall all notes accurately </li>
+        </ul>
+        Your compensation in this phase is calculated based on your  accuracy. <br>
+
+        On the next page you will try out an example.
+        
+    </p>
+       
+
+
+    <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; width: 100%; margin-top: auto;">
+        <button id="Ins9Button" style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction9','instructionDemo')" class="btn btn-secondary my-2">Continue</button>
+        
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction9','Instruction8')"  class="btn btn-secondary">Go back</button>
+    </div>
+</div>
+
+
+
+<!-- Instruction10 -->
+<div id="Instruction10" class="mt-5" style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; height: 100vh; display: none;">
+   
+    <h3 style="text-align: center;">Phase 3 Example: Completion</h3> <br>
+    <p style="font-size: 20px;"> 
+        How does it work: <br>
+        <ul>
+            <li>This phase is like a bonus round, and is only provided at the end of each melody
+            </li>
+            <li>You will try to decide how to complete the melody with a specific number of notes
+            </li>
+        </ul>
+        Try hard to:
+        <ul>
+            <li>Make your completion fit in with the rest of the melody as much as possible
+            </li>
+        </ul>
+    Your bonus in this phase is calculated based on the similarity between your completion and  the bird’s completion. <br> You can think of this as a bonus for your bonus payment! Any correct notes you guess in this phase only increases your total bonus, <br>
+              but wrong notes won’t take away from it.  </p>
+        
+
+        On the next page you will try out an example.
+        
+    </p>
+
+
+    <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; width: 100%; margin-top: auto;">
+        <button id="Ins10Button" style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction10','instructionDemo')" class="btn btn-secondary my-2">Continue</button>
+        
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction10','Instruction9')"  class="btn btn-secondary">Go back</button>
+    </div>
+ </div>
+
+   
+
+
+ <!-- EXperiment summary -->
+
+<!-- Instruction10 -->
+<div id="Instruction11" class="mt-5" style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; height: 100vh; display: none;">
+   
+    <h3 style="text-align: center;">Experiment Summary</h3> <br>
+    <p style="font-size: 20px;"> 
+      
+        <ul>
+            <li>Each bird will teach you a song, split into 5 parts
+            </li>
+            <li>In the <b>learning</b> phase, you simply need to follow the notes shown by the bird
+            </li>
+            <li>In the <b>memory</b> phase, you will need to recall the song without any feedback</li>
+            <li>At the end of each song, you will have a bonus <b>completion</b> phase to complete the song
+            </li>
+            <li>Overall, you need to pay attention to the song patterns to complete each phase and earn a large bonus payment!
+            </li>
+        </ul>
+      
+        
+    </p>
+
+
+    <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; width: 100%; margin-top: auto;">
+        <button id="Ins10Button" style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction11','CompCheck')" class="btn btn-secondary my-2">Continue</button>
+        
+        <button style="width: 120px; height: 40px; margin-bottom: 20px;" type="button"  onclick="pageSwitcher('Instruction11','Instruction10')"  class="btn btn-secondary">Go back</button>
+    </div>
+ </div>
+   
+<!-- """"""""""""Compcheck""""""""""""""""""""""""""""""""""""""" -->
+<div id="CompCheck" style="display: none;">
+
+    <!-- Q1 -->
+    <fieldset>
+        <legend>1. What determines your performance bonus in the learning and memory phases? </legend>
+        <div class="option-group">
+            <label>
+                <input type="radio" id="q1a" name="q1" value="option1" required>
+                &nbsp; &nbsp;Accuracy
+
+            </label>
+            <label>
+                <input type="radio" id="q1b" name="q1" value="option2">
+                &nbsp; &nbsp;Speed
+
+            </label>
+            <label>
+                <input type="radio" id="q1c" name="q1" value="option3">
+                &nbsp; &nbsp;Speed and accuracy
+
+
+            </label>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>2. What is your task in the completion phase?        </legend>
+        <div class="option-group">
+            <label>
+                <input type="radio" id="q2a" name="q2" value="option1" required>
+                &nbsp; &nbsp;Come up with the most creative melody
+            </label>
+            <label>
+                <input type="radio" id="q2b" name="q2" value="option2">
+                &nbsp; &nbsp;Teach the bird how the song should be finished based on other songs you’ve heard
+            </label>
+            <label>
+                <input type="radio" id="q2c" name="q2" value="option3">
+                &nbsp; &nbsp;Use the structure of the song to guess how the bird will complete the song
+
+
+            </label>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>3. How will you interact with the experiment? </legend>
+        <div class="option-group">
+            <label>
+                <input type="radio" id="q3a" name="q3" value="option1" required>
+                &nbsp; &nbsp;Pressing S,D,F,H,J,K keys on the keyboard using only one hand. 
+
+            </label>
+            <label>
+                <input type="radio" id="q3b" name="q3" value="option2">
+                &nbsp; &nbsp;Using the left hand to press the S,D,F keys and the right hand to press the H,J,K keys
+            </label>
+            <label>
+                <input type="radio" id="q3c" name="q3" value="option3">
+                &nbsp; &nbsp;Clicking the bird that produced each melody
+            </label>
+        </div>
+    </fieldset>
+
+    <div  style="text-align: center;">
+        <button type="button" name="button" class="buttonInstructionsCheck" onclick="instructioncheck()">Check Answers</button> <br>
+        <button type="button" name="button" class="buttonInstructionsCheck my-2" onclick="pageSwitcher('CompCheck','Instruction11')" >Go Back</button>
+      </div> <br>
+
+</div>
+
+
+<div id="startExperiment" class="mt-5"  style="display: none; position: relative; height: 100vh; width: 100%; justify-content: center; align-items: center;">
+   
+    <div style="display: flex; position: relative; height: 90vh; width: 100%; justify-content: center; align-items: center;">
+        <div class="bird" style="position: absolute; left: 12%; top: 50%; transform: translateY(-50%);">
+            <img src="./src/images/bird1.png" alt="Bird" id="MElody-img" >
+        </div>
+
+        <div style="text-align: left; max-width: 50%; margin-left: 15%; position: relative;">
+                    Are you ready? <br>
+            Remember, your bonus is calculated based on your accuracy <br> 
+           
+            Press <strong><b>SPACE</b></strong> key to start.  
+        </div>
+    </div>
+</div>
+
+
+
+
+</div>
+<div id="Melodychange" class="mt-5"  style="display: none; position: relative; height: 100vh; width: 100%; justify-content: center; align-items: center;">
+   
+    <div style="display: flex; position: relative; height: 90vh; width: 100%; justify-content: center; align-items: center;">
+        <div class="bird" style="position: absolute; left: 12%; top: 50%; transform: translateY(-50%);">
+            <img src="./src/images/InsImage.png" id="Melody-img" alt="Instruction Image">
+        </div>    
+        <div style="text-align: left; max-width: 50%; margin-left: 15%; position: relative;">
+            Are you ready for melody <div id="MelodyNo" style="display: inline-block;"></div>? <br>
+            Remember, your bonus is calculated based on your accuracy <br> 
+
+
+            Press <strong><b>SPACE</b></strong> key to start.  
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div id="instructionDemo"  style="display: none;"  >
+
+
+        <div class="bird" >
+            <div class="bird-container">
+                <img src="./src/images/bird1.png" alt="Bird" id="Insbird">
+                <div id="instructionFeedback">
+               Learning Time! 
+               <br> Press <strong><b>SPACE</b></strong> to continue
+                </div>
+            </div>
+        </div>    
+
+        <h1 id="Part1ins">Example Phase 1: Learning</h1>
+        <h1 style="display: none;" id="Part2ins">Example Phase 2: Memory</h1>
+        <h1 style="display: none;"  id="Part3ins">Example Phase 3: Completion</h1>
+        
+        <div class="part1instructions">
+                <h3>Your task:</h3>
+                <ul>
+                    <li>Repeat the note one by one.</li>
+                    <!-- <li>Make sure you are quick and accurate.</li> -->
+                </ul>
+                <!-- <button class="closePopup">Close</button> -->
+        </div>
+
+        <div class="part2instructions " style="display: none;">
+            <h3>Your task:</h3>
+            <ul>
+
+                <li>Try to recall the song.</li>
+                <li id="Instrans">Make sure you are accurate.
+
+                </li>
+            </ul>
+            <!-- <button class="closePopup">Close</button> -->
+        </div>
+
+        <div class="part3instructions " style="display: none;">
+            <h3>Your task:</h3>
+            <ul>
+                <li>Help the bird to complete the <br>next part of the melody.
+                </li>
+            </ul>
+            <!-- <button class="closePopup">Close</button> -->
+        </div>
+        
+        <div  style="display: none;" class="" id="notesInsfeedback">Notes: <span id="noteInsno">0/6</div>
+            <!-- <div style="display: none;" class="mt-5 " id="score">Score: <span id="score-value">0</span>/100</div> -->
+
+            <div id="instructionNotes">
+                <div id="Insnote_block"></div>
+                <div class="hor-line"></div>
+            <!-- Vertical lines representing note positions -->
+                <div class="line" data-line="30" style="left: calc(30% + 20px)"></div>
+                <div class="line"  data-line="40" style="left: calc(40% + 20px)"></div>
+                <div class="line" data-line="50" style="left: calc(50% + 20px)"></div>
+                <div class="line" data-line="60" style="left:calc(60% + 20px);"></div>
+                <div class="line" data-line="70" style="left: calc(70% + 20px);"></div>
+                <div class="line" data-line="80" style="left: calc(80% + 20px);"></div>
+    
+            </div>
+            <!-- remove mt if u dont want the lines to pass through the keys -->
+            <div class="keyboard" id="Inskeyboard">   
+          
+          
+                        <!-- Keyboard keys -->
+                        <button class="key" data-note="S" data-line="30" style="left: 30%;">S</button>
+                        <button class="key" data-note="D" data-line="40" style="left: 40%;">D</button>
+                        <button class="key" data-note="F" data-line="50" style="left: 50%;">F</button>
+                        <button class="key" data-note="J" data-line="60" style="left: 60%;">J</button>
+                        <button class="key" data-note="K" data-line="70" style="left: 70%;">K</button>
+                        <button class="key" data-note="L" data-line="80" style="left: 80%;">L</button>
+            </div>
+            <div id="InstructionbuttonContainer" style="display: none;" >
+                <!-- <button type="button" class="btn btn-primary mt-5 mx-2 ">Retry</button> -->
+                <button type="button" class="btn btn-primary mt-5">Continue</button>
+             </div>
+            </div>
+         
+       
+      
+</div>
+
+
+
+    <!-- """"""""""""""""""Experiment""""""""""""""""""""""""""""""""""""" -->
+    <div id="experiment"  style="display: none;"  >
+     
+    <div class="progress-bars" >
+        <div class="progress-container">
+            <div class="melody-box">
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box "></div>
+                 
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                   
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                  
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                </div>
+            </div>
+            <div class="melody-box">
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                  
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                   
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+           
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+ 
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                </div>
+            </div>
+            <div class="melody-box">
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+         
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                </div>
+            </div>
+            <div class="melody-box">
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+          
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                 
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                 
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+               
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                </div>
+            </div>
+            <div class="melody-box">
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+    
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+
+                </div>
+                <div class="submelody-box">
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                    <div class="phase-box"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+        <h2 id="part1">Phase 1: Learning</h2>
+        <h2 style="display: none;" id="part2">Phase 2: Memory</h2>
+        <h2 style="display: none;" id="part3">Phase 3: Completion</h2>
+        <div class="birdContainer">
+            <div class="bird" id="bird">
+                <div class="bird-container">
+                    <img src="./src/images/bird1.png" alt="Bird" id="bird-img">
+                    <div id="feedback"  >
+                    Melody 1 Part 1 Start!  <br>
+                    Press <stong><b>SPACE</b></stong>
+                    </div>
+                </div>
+            </div>    
+        </div>
+      
+
+        <!-- Instruction pop-ups for each part -->
+        <div class="part1instructions">
+            <h3>Your task:</h3>
+            <ul>
+                <li>Repeat the note one by one.</li>
+                    <!-- <li>Make sure you are quick and accurate.</li> -->
+            </ul>
+            <!-- <button class="closePopup">Close</button> -->
+        </div>
+
+        <div class="part2instructions " style="display: none;">
+            <h3>Your task:</h3>
+            <ul>
+                <li>Try to recall the song.</li>
+                <li id="phase2transition">Make sure you are accurate.
+
+                </li>
+            </ul>
+            <!-- <button class="closePopup">Close</button> -->
+        </div>
+
+        <div class="part3instructions" style="display: none;">
+            <h3>Your task:</h3>
+            <ul>
+                <li>Help the bird to complete <br> the next part of the melody.</li>
+            </ul>
+            <!-- <button class="closePopup">Close</button> -->
+        </div>
+       
+
+        <div class="mt-5 " id="score">Score: <span id="score-value">0</span>/100</div>
+        <div   class="" id="notesfeedback">Notes: <span id="noteNo">0</div>
+        <div id="notes">
+            <div id="note_block"></div>
+            <div class="hor-line"></div>
+        <!-- Vertical lines representing note positions -->
+            <div class="line" data-line="30" style="left: calc(30% + 20px)"></div>
+            <div class="line"  data-line="40" style="left: calc(40% + 20px)"></div>
+            <div class="line" data-line="50" style="left: calc(50% + 20px)"></div>
+            <div class="line" data-line="60" style="left:calc(60% + 20px);"></div>
+            <div class="line" data-line="70" style="left: calc(70% + 20px);"></div>
+            <div class="line" data-line="80" style="left: calc(80% + 20px);"></div>
+
+        </div>
+        <!-- remove mt if u dont want the lines to pass through the keys -->
+        <div class="keyboard" id="keyboard">   
+            <!-- <div id="instrument">   
+                <img src="./src/images/piano.png" alt="Piano Keyboard" id="piano-image">
+            </div> -->
+      
+                    <!-- Keyboard keys -->
+                    <button class="key" data-note="S" data-line="30" style="left: 30%;">S</button>
+                <button class="key" data-note="D" data-line="40" style="left: 40%;">D</button>
+                <button class="key" data-note="F" data-line="50" style="left: 50%;">F</button>
+                <button class="key" data-note="J" data-line="60" style="left: 60%;">J</button>
+                <button class="key" data-note="K" data-line="70" style="left: 70%;">K</button>
+                <button class="key" data-note="L" data-line="80" style="left: 80%;">L</button>
+        </div>
+        <div id="buttonContainer" style="display: none;">
+            <!-- <button type="button" class="btn btn-primary mt-5 mx-2 ">Retry</button> -->
+            <button id="continueButton" type="button" class="btn btn-primary mt-5">Continue</button>
+         </div>
+        </div>
+     
+   
+    </div>
+
+<!-- """""""Phase2 interruption""""" -->
+<div id="Phase2interruption" style="text-align: center; display: none;  height: 100vh;
+    width: 100%;" >
+    <div class="bird bird-instruction">
+        <div class="bird-container">
+        <img src="./src/images/bird1.png" alt="Bird" id="phase-img" style="margin: auto;"> 
+        <div id="phase2feedback">
+            Do you remember the song? <br>
+            Press <strong><b>SPACE</b></strong> to recall it.
+        </div>
+    </div>
+    </div>
+
+<!-- <button  id="buttonResult"   type="button" class="btn btn-primary mt-5" style="margin-left: 10rem;">Continue</button> -->
+</div>
+</div>
+
+
+
+<div id="birdreply" style="display: none; height: 100vh;
+    width: 100%;">
+    <div class="bird  bird-instruction">
+        <div class="bird-container">
+            <img src="./src/images/bird1.png" alt="Bird" id="birdreply-img">
+            <div id="birdfeedback">
+            Melody 1 Part 1 Start!
+            </div>
+        </div>
+    </div>    
+</div>
+
+<!-- """""""""""""Result""""""""""""""""""""""""" -->
+<div id="experimentResult" style="display: none; height: 100vh; width: 100%;">
+    <div class="bird  bird-instruction">
+        <div class="bird-container ">
+            <img src="./src/images/bird1.png" alt="Bird" id="birdResult-img">
+            <div id="scoreFeedback">
+                You scored <span id="scorephase" style="display: inline-block;">10</span> points just now
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div id="MelodyResult" style="display: none; position: relative; height: 100vh; width: 100%; justify-content: center; align-items: center;">
+    <div style="display: flex; position: relative; height: 100vh; width: 100%; justify-content: center; align-items: center;">
+    <!-- Bird Image -->
+        <div class="bird" style="position: absolute; left: 19%; top: 45%; transform: translateY(-50%);">
+            <img src="./src/images/bird1.png" alt="Bird" id="MelodyBird" >
+        </div>
+
+        <!-- Text Content -->
+        <div style="text-align: left; max-width: 50%; margin-left: 15%; position: relative;">
+            <ul style="list-style: none; padding: 0;">
+                <h2>Reward for Melody <span id="MelodyNum"></span></h2>
+                <li>You have got <span id="totalPercentage"></span>% correct.</li>
+                <li>You have earned <span id="melodyTotalResult">0</span> of the total bonus for this melody.</li>
+            </ul>
+            <div style="margin-top: 20px;">
+                <button id="buttonMelodyResult" type="button" class="btn btn-primary mt-5">
+                    Press Space to continue
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+ <!-- """"""""""""""Instruction4""""""""""""""""""""""""""""" -->
+
+
+
+
+
+
+<!-- """""""""""""Instructionresult""""""""""""""""""""""""" -->
+<div id="instructionResult"  style="display: none;" >
+    <div class="bird">
+        <img src="./src/images/bird7.png" alt="Bird" id="birdResult-img">
+        <div id="scoreFeedback">
+            You scored <span id="scoreInstructionphase" style="display: inline-block;">10</span> points just now
+        </div>
+    </div>
+    <div class="scoreKeyboardContainer">
+    <div class="keyboard"  >   
+        <div id="instrument">   
+        <img src="./src/images/piano.png" alt="Piano Keyboard" id="piano-image">
+        </div>
+        <!-- Keyboard keys -->
+        <button class="key" data-note="D" data-line="30" style="left: 30%;">D</button>
+    <button class="key" data-note="F" data-line="40" style="left: 40%;">F</button>
+    <button class="key" data-note="G" data-line="50" style="left: 50%;">G</button>
+    <button class="key" data-note="H" data-line="60" style="left: 60%;">H</button>
+    <button class="key" data-note="J" data-line="70" style="left: 70%;">J</button>
+    <button class="key" data-note="K" data-line="80" style="left: 80%;">K</button>
+  
+    </div>
+  
+</div>
+<button  id="InstructionbuttonResults" type="button" class="btn btn-primary mt-5" style="margin-left: 10rem;">Continue</button>
+</div>
+</div>
+
+
+<!-- """""""""""""Result""""""""""""""""""""""""" -->
+<div id="InstructionMelodyResult" style="display: none;">
+    <div class="bird" style="left: 40%;">
+        <img src="./src/images/bird7.png" alt="Bird" id="InstructionMelodyBird" >
+        <div>
+            <ul>
+                <h2>Reward for Instruction Melody </h2>
+                <li>You have got <span id="InstructionTotalPercentage"></span> percent correct. Your speed is <span id="InstructionTimes">2</span> ms. </li>
+                <li>You have earned <span id="InstructionmelodyPartResult">0</span> bonus in this trial </li>
+            </ul>
+          <br><br>
+            <ul  style="display: none;" >
+                <!-- change ids -->
+                <h2>Reward for Melody<span id="InstructionMelodyNum"></span> </h2>
+                <li>Your have got <span id="InstructiontotalPercentage"></span> percent correct. Your speed is <span id="MelodyTotalTime">2</span> ms. </li>
+                <li>You have earned <span id="InstructionmelodyTotalResult">0</span> bonus in this trial </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="scoreKeyboardContainer">
+        <div class="keyboard"  >   
+            <div id="Melodyinstrument">   
+            <img src="./src/images/piano.png" alt="Piano Keyboard" id="piano-image">
+            </div>
+            <!-- Keyboard keys -->
+            <button class="key" data-note="D" data-line="30" style="left: 30%;">D</button>
+        <button class="key" data-note="F" data-line="40" style="left: 40%;">F</button>
+        <button class="key" data-note="G" data-line="50" style="left: 50%;">G</button>
+        <button class="key" data-note="H" data-line="60" style="left: 60%;">H</button>
+        <button class="key" data-note="J" data-line="70" style="left: 70%;">J</button>
+        <button class="key" data-note="K" data-line="80" style="left: 80%;">K</button>
+      
+        </div>
+      
+    </div>
+    <button  id="InstructionbuttonMelodyResult"   type="button" class="btn btn-primary mt-5" style="margin-left: 10rem;">Continue to next part</button>
+    <!-- change continue button id// change melody to next melody or the next submelody depending on the conidtion  -->
+    </div>
+    
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="./src/script.js"></script>
+</body>
+</html>

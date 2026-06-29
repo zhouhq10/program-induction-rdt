@@ -1,0 +1,590 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+#main_page{
+    padding: 2%;
+}
+
+#experiment, #MelodyResult, #instructionResult, #InstructionMelodyResult,#birdsInstruction, #startExperiment,#instructionDemo,#Melodychange{
+    text-align: center;
+    width: 80%;
+    height: 100vh;
+    position: relative;
+}
+
+
+
+#birdsInstruction div:first-child,
+#Instruction3 div:first-child,
+#Instruction4 div:first-child,
+#Instruction5 div:first-child,
+#Instruction6 div:first-child,
+#Instruction7 div:first-child,
+#Instruction8 div:first-child,
+#Instruction9 div:first-child,
+#Instruction10 div:first-child{
+    display: flex;
+    margin-top: 3%;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#Insbird img{
+    width: 500px;
+    height: 500px;
+}
+
+
+#Instruction5 img:first-child , #Instruction6 img:first-child, #Instruction7 img:first-child, #Instruction8 img:first-child {
+    width: 500px;
+    height: 400px;
+}
+
+
+#instrument img, #instrumentInstruction img ,#Melodyinstrument img, #phase2instrument img #instrumentInstruction img {
+    width: 70px;
+    height: 60px;
+}
+#instrument, #instrumentInstruction, #Melodyinstrument,#phase2instrument , #instrumentInstruction{
+    position: absolute;
+    top: 61%;
+    left: 22%;
+    transform: translateX(-50%);
+}
+
+.bird {
+    position: absolute; /* Fix the bird's position within its container */
+    top: 50%; /* Adjust this based on where you want the bird */
+    left: 10%; /* Adjust to align horizontally with the feedback */
+    transform: translateY(-50%); /* Center vertically */
+    z-index: 10; /* Keep it above other elements */
+}
+
+.Insbird{
+    position: fixed;
+    top: 10%;
+    left: 15%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+
+}
+
+
+ #instructionResult .bird, #InstructionMelodyResult .bird {
+    top: 30%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+ #bird-img,#birdInstruction, #InstructionMelodyBird,#Insbird {
+    width: 150px;
+}
+
+#experiment .bird{
+    top: 52%;
+    left: 2%;
+    transform: translate(-50%, -50%);
+}
+
+#instructionDemo .bird{
+    top: 36%;
+    left: 2%;
+    transform: translate(-50%, -50%);
+}
+
+
+#page1{
+    margin: 2em;
+ }
+
+
+.bird-instruction {
+    position: fixed;
+    top: 30vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    z-index: 9;
+    opacity: 1;
+}
+   
+#birdreply-img, #birdResult-img, #phase-img,#MelodyBird,#MElody-img,#Melody-img{
+    width: 350px;
+    height: auto;
+}
+
+
+
+
+ 
+#feedback, #scoreFeedback, #feedbackInstruction,#phase2feedback,#birdfeedback,#instructionFeedback {
+    display: inline-block;
+    background: white;
+    border: 2px solid #000;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 18px;
+ 
+    width : 20em;
+    /* max-width: 65%; */
+  /* Space between the bird and the feedback */
+    line-height: 1.5; /* Adjusted line-height for better vertical alignment */
+    white-space: normal;
+    position: relative;
+}
+
+#feedback,#instructionFeedback { 
+    position: absolute;
+    width: 13em;
+} 
+
+#feedback::before ,#scoreFeedback::before,#feedbackInstruction::before,#phase2feedback::before,#birdfeedback::before ,#instructionFeedback::before{
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -20px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-right: 20px solid white;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+
+#feedback::after, #scoreFeedback::after,#feedbackInstruction::after,#phase2feedback::after,#birdfeedback::after,#instructionFeedback::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -22px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-right: 22px solid #000; 
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+}
+
+
+
+.part1instructions, .part2instructions,.part3instructions{
+    position: absolute;
+    text-align: start;
+    width: 50%;
+    top: 78%;
+
+    transform: translateY(-50%);
+}
+
+
+#instructionDemo{
+    margin-top: 50px;
+    margin-left: 50px;
+}
+
+#instructionDemo .part1instructions, #instructionDemo .part2instructions, #instructionDemo .part3instructions{
+    position: absolute;
+    text-align: start;
+    width: 50%;
+    top: 62%;
+
+    transform: translateY(-50%);
+}
+
+
+#score, #scoreInstruction, #notesfeedback,#notesInsfeedback {
+    margin-top: 10px;
+    margin-left : 5rem;
+    font-size: 18px;
+}
+
+#notes,#instructionNotes {
+    position: relative;
+    margin: 40px auto;
+    height: 150px;
+    width: 100%;
+}
+
+
+
+.line {
+    position: absolute;
+    width: 2px;
+    height: 400px;
+    background-color: gray;
+    top: 0;
+}
+.hor-line{
+    position: absolute;
+    width: 60%;
+    height: 2px;
+    background-color: gray;
+    top: 20%;
+    left: 27%;
+}
+.note {
+    position: absolute;
+    width: 60px;
+    height: 30px;
+    background-color: rgba(84, 157, 230, 0.786);
+    margin: 0 5px;
+    top: 0;
+    transform: translate(-55%,50%);
+    transition: top 0.3s ease-out; /* Smooth transition for top position */
+}
+
+.note.move-down {
+    top: 80px; /* This value should match how far you want the note to move down */
+    
+}
+
+.keyboard {
+    position: relative;
+    margin-top: 160px; /* Add margin to ensure keyboard is below the notes */
+    height: 150px;
+    width: 100%;
+}
+
+.scoreKeyboardContainer{
+
+    margin-top: 30%;
+}
+
+.key {
+    position: absolute;
+    bottom: 0;
+    width: 40px;
+    height: 40px;
+    padding: 10px 0;
+    font-size: 16px;
+    background-color: lightgray;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    text-align: center;
+    color: darkblue;
+    font-weight: bold;
+    background-color: rgba(84, 157, 230, 0.429);
+    opacity: 0.9;
+}
+
+.clicked {
+    background-color: rgb(255, 230, 0); /* Change color for visual effect */
+    color: #ffb300;  /* Add text color */
+    transition: background-color 0.2s;
+}
+
+
+
+#timer {
+    top: -10em;
+    position: absolute;
+    font-size: 18px;
+}
+
+#keyboard #img, #Inskeyboard #img {
+    position: absolute;
+    top: 20%;
+    left: 15%;
+    transform: translateX(-50%);
+}
+
+
+
+.note.correct {
+    background-color: darkgreen;
+    color: white;
+}
+
+.note.incorrect {
+    background-color: rgb(245, 1, 1);
+    color: white;
+}
+
+
+
+
+
+#buttonContainer, #InstructionbuttonContainer{
+    margin-left: 10%;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+  .manual-bullets {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align the text */
+    justify-content: center;
+    text-align: left; /* Ensures text is aligned properly within the container */
+    margin: 0;
+    padding: 0;
+}
+
+.bullet-item {
+    margin-bottom: 0.5em; /* Adjust spacing between items */
+    font-size: 1em; /* Ensure consistent text size */
+    line-height: 1.4; /* Adjust line height for readability */
+    display: flex;
+    align-items: center; /* Vertically center the bullet and text */
+}
+
+.bullet-item::before {
+    content: '\2022'; /* Unicode for a bullet point */
+    color: #000; /* Set bullet color */
+    font-size: 1.2em; /* Adjust bullet size */
+    margin-right: 0.5em; /* Space between bullet and text */
+    display: inline-block;
+}
+
+
+
+
+
+/* COmprehension quest */
+#CompCheck {
+    width: 60%; 
+    margin: 0 auto; /* Center the form on the page */
+    padding: 20px;
+    background-color: #f9f9f9; /* Light background for contrast */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+fieldset {
+    border: 1px solid #ccc; /* Light border for fieldset */
+    border-radius: 8px; /* Rounded corners for the fieldset */
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+legend {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    padding: 0 10px; /* Add padding to the legend */
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column; /* Stack the options vertically */
+    margin-top: 10px;
+}
+
+.option-group label {
+    margin-bottom: 10px; /* Space between each option */
+    font-size: 1em;
+    color: #333;
+}
+
+input[type="radio"] {
+    margin-right: 10px; /* Space between radio button and label */
+}
+
+
+
+input[type="radio"]:checked {
+    accent-color: #007BFF; /* Change the color of the checked radio button */
+}
+
+#helpIcon {
+    cursor: pointer;
+    font-size: 50px; /* Size of the question mark */
+    position: absolute; /* Position relative for the popup positioning */
+display: inline-block;
+    top: 90%;
+    left: 10%;
+    z-index: 1;
+}
+
+
+.instructionsPopup {
+
+    top: 70%;
+    left: 4%;
+    position: absolute;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 250px;
+    text-align: center;
+    display: none; /* Hidden initially */
+    border-radius: 5px;
+}
+
+
+
+.closePopup {
+    margin-top: 20px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.closePopup:hover {
+    background-color: #0056b3;
+}
+
+.progress-container {
+    display: flex;
+    flex-wrap: wrap;  /* Allows wrapping when boxes exceed available space */
+    justify-content: space-around;
+    margin-bottom: 20px;
+    overflow: hidden; /* Prevents horizontal scrolling */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.melody-box {
+    border: 2px solid rgb(83, 157, 4);
+    display: flex;
+
+    padding: 5px;
+    width:17%; /* Adjust to fit multiple melody boxes in a single line */
+    margin: 0.5em;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.submelody-box {
+    /* border: 2px solid lightgray; */
+    display: flex;
+    width: 20%; /* Full width within melody box */
+    padding-left: 2px;
+    box-sizing: border-box;
+}
+
+.phase-box {
+    width: 10px;
+    height: 25px;
+    border: 1px solid gray;
+    background-color: lightgray;
+    border-radius: 2px;
+}
+
+.active-phase {
+    background-color: #4caf50; /* Green color for active phases */
+}
+
+.completed-phase {
+    background-color: #3ceb1d; /* Green color for active phases */
+}
+
+.instruction-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 80%;
+    justify-content: center;
+    margin-top: 20px;
+    flex-grow: 1;
+}
+
+.bird-image {
+    width: 450px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.instruction-text {
+    text-align: left;
+    width: 60%;
+    font-size: 20px;
+}
+
+.button-container {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column; /* Ensures buttons stack vertically */
+    align-items: center;
+}
+
+
+
+/* Survey */
+.survey-container {
+    width: 60%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.survey-container h1, p {
+    text-align: center;
+}
+
+.survey-container .question {
+    margin-bottom: 20px;
+}
+
+.survey-container .question label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.survey-container .options label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.survey-container input[type="text"],.survey-container input[type="number"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.survey-container textarea {
+    resize: none;
+    height: 100px;
+}
+
+.survey-container button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.survey-container button:hover {
+    background-color: #0056b3;
+}
+
+.survey-container .note {
+    font-size: 0.9rem;
+    color: #777;
+    margin-top: 15px;
+    text-align: center;
+}
