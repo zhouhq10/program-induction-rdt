@@ -81,11 +81,14 @@ def main():
     parser.add_argument(
         "--save_path",
         type=str,
-        default="/pcfg_frame",
+        default="outputs/pcfg_frame",
         help="Base path for saving frames.",
     )
     parser.add_argument("--random_seed", type=int, default=0, help="Random seed.")
     args = parser.parse_args()
+    save_path = Path(args.save_path)
+    if not save_path.is_absolute():
+        save_path = REPO_ROOT / save_path
 
     # Load primitive model and build grammar
     pm_init = pd.read_csv(REPO_ROOT / "data" / args.task / "task_pm.csv", index_col=0)
@@ -106,12 +109,12 @@ def main():
         np.random.seed(args.random_seed)
         depth_prob = power_law_dist(args.max_depth, alpha=1)
         src_pth = (
-            f"{args.save_path}/rd_curve/frame_num_{args.frame_num}_{args.random_seed}"
+            save_path / "rd_curve" / f"frame_num_{args.frame_num}_{args.random_seed}"
         )
         os.makedirs(src_pth, exist_ok=True)
 
         for i in range(args.num_task):
-            save_path_cur_task = f"{src_pth}/task_{i}"
+            save_path_cur_task = src_pth / f"task_{i}"
             os.makedirs(save_path_cur_task, exist_ok=True)
             for j in range(args.task_len):
                 sampled_depths = [
@@ -140,9 +143,11 @@ def main():
                                 prog_list.append(prog)
                                 break
                 prog_list = pd.concat(prog_list).reset_index(drop=True)
-                prog_list.to_csv(f"{save_path_cur_task}/index_{j}.csv")
+                prog_list.to_csv(save_path_cur_task / f"index_{j}.csv")
 
     else:
+        frame_dir = save_path / "all_frames_given_depth_and_typestring"
+        frame_dir.mkdir(parents=True, exist_ok=True)
         for depth in args.depth:
             rfs = []
             for t in types:
@@ -152,7 +157,7 @@ def main():
             combined = pd.concat(rfs).reset_index(drop=True)
             combined = check_remove_memorize(combined)
             combined.to_csv(
-                f"{args.save_path}/all_frames_given_depth_and_typestring/task_frames_{depth}.csv"
+                frame_dir / f"task_frames_{depth}.csv"
             )
 
 
