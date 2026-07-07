@@ -132,6 +132,7 @@ def main():
     # Since we are initializing the priors, we do not consider AG here (count-based)
     grammar.production["adaptor_lp"] = 0
     grammar.production = grammar.update_overall_lp()
+    pm_task = grammar.production
 
     # ----- Save the updated pm_task -----
     output_path = Path(args.output_pickle_path.format(args.task))

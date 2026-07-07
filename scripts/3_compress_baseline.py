@@ -30,7 +30,7 @@ import pandas as pd
 
 from src.utils.general import prepare_task_data, create_save_path
 from src.domain.melody.melody_primitive import *
-from src.program.grammar import Grammar, AdaGrammar
+from src.program.grammar import AdaGrammar
 from src.domain.melody.greedy_dp_compressor import (
     GreedyDP_PCFGCompressor,
     GreedyDP_AGCompressor,
@@ -206,6 +206,12 @@ def main() -> None:
     # lossless_error and frames are runtime flags not exposed as CLI args
     args.lossless_error = False
     args.frames = None
+    if args.curriculum.lower() == "rle":
+        args.curriculum = "RLE"
+    elif args.curriculum.lower() == "chunk":
+        args.curriculum = "chunk"
+    else:
+        raise ValueError("Invalid baseline curriculum: expected 'chunk' or 'RLE'.")
     print(args, flush=True)
 
     # Load melody train tasks
@@ -223,30 +229,29 @@ def main() -> None:
         index_col=0,
         na_filter=False,
     )
-    pl = Grammar(production=init_pm)
-
-    # Restrict type signatures to match the baseline's program space
-    if args.curriculum == "chunk":
-        # Chunking: only note-typed arguments — forces memorise-primitive use
-        pl.type_strings = [
-            "note->note",
-            "note_note->note",
-            "note_note_note->note",
-        ]
-    elif args.curriculum == "RLE":
-        # RLE: count-typed arguments — enables repeat-primitive encoding
-        pl.type_strings = [
-            "note_count->note",
-            "note_note_count->note",
-            "note_count_note->note",
-        ]
-
     program_lib = AdaGrammar(
         production=init_pm,
         lib_size=args.lib_size,
         global_alpha=args.global_alpha,
         global_d=args.global_d,
     )
+
+    # Restrict type signatures to match the baseline's program space
+    if args.curriculum == "chunk":
+        # Chunking: only note-typed arguments — forces memorise-primitive use
+        program_lib.type_strings = [
+            "note->note",
+            "note_note->note",
+            "note_note_note->note",
+        ]
+    elif args.curriculum == "RLE":
+        # RLE: count-typed arguments — enables repeat-primitive encoding
+        program_lib.type_strings = [
+            "note_count->note",
+            "note_note_count->note",
+            "note_count_note->note",
+        ]
+
     compressor = GreedyDP_AGCompressor(program_lib=program_lib, args=args)
     compressor.run(tasks=task_data, save_path=full_folder_path)
 
