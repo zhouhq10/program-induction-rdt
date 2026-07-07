@@ -5,9 +5,12 @@ sys.path.append("..")
 import numpy as np
 import pandas as pd
 import argparse, re, os
+from pathlib import Path
 
 from src.program.grammar import Grammar
 from src.program.primitive import Placeholder
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def check_remove_memorize(frames: pd.DataFrame) -> pd.DataFrame:
@@ -85,7 +88,7 @@ def main():
     args = parser.parse_args()
 
     # Load primitive model and build grammar
-    pm_init = pd.read_csv(f"../data/{args.task}/task_pm.csv", index_col=0)
+    pm_init = pd.read_csv(REPO_ROOT / "data" / args.task / "task_pm.csv", index_col=0)
     pl = Grammar(production=pm_init)
 
     # Input-output type signatures

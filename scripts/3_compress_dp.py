@@ -18,6 +18,7 @@ sys.path.append("../")
 
 import os
 import argparse
+from pathlib import Path
 import pandas as pd
 
 from src.utils.general import prepare_task_data, create_save_path
@@ -29,6 +30,8 @@ from src.domain.melody.greedy_dp_compressor import (
     GreedyDP_HAGCompressor,
 )
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
 
 def initialize_program_library(
     curriculum: str, init_pm: pd.DataFrame, args: argparse.Namespace
@@ -38,7 +41,7 @@ def initialize_program_library(
     Args:
         curriculum: One of ``"pcfg"``, ``"count_ag"``, or ``"hier_ag"``.
         init_pm: Initial production table (DataFrame) loaded from
-            ``data/melody/task_pm.csv``.
+        ``data/primitive/task_pm.csv``.
         args: Parsed command-line arguments forwarded to the compressor
             constructor (beta, frame budget, library hyper-parameters, etc.).
 
@@ -279,8 +282,8 @@ def main() -> None:
     print(args, flush=True)
 
     # Load melody train tasks
-    base_path = "../data/primitive"
-    task_path = "../data/task/train_notes_wo_break_104.obj"
+    base_path = REPO_ROOT / "data" / "primitive"
+    task_path = REPO_ROOT / "data" / "task" / "train_notes_wo_break_104.obj"
     task_data = prepare_task_data(task_path, args.random_seed, args.random_seq)
 
     # Create output directory
@@ -288,7 +291,7 @@ def main() -> None:
 
     # Load primitive production table and initialise grammar + compressor
     init_pm = pd.read_csv(
-        os.path.join(base_path, "task_pm.csv"), index_col=0, na_filter=False
+        base_path / "task_pm.csv", index_col=0, na_filter=False
     )
     compressor = initialize_program_library(args.curriculum, init_pm, args)
 
@@ -296,7 +299,7 @@ def main() -> None:
     # frames[i] contains frames of depth i+1 (1-indexed)
     frames = (
         [
-            pd.read_csv(os.path.join(base_path, f"task_frames_{i}.csv"), index_col=0)
+            pd.read_csv(base_path / f"task_frames_{i}.csv", index_col=0)
             for i in range(1, args.frame_depth + 1)
         ]
         if args.frame_gen == "sample"

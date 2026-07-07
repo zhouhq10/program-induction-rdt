@@ -17,6 +17,7 @@ sys.path.append("../")
 import os
 import random
 import argparse
+from pathlib import Path
 from typing import Tuple
 
 import numpy as np
@@ -25,6 +26,8 @@ import pandas as pd
 from src.program.grammar import *
 from src.domain.melody.melody_primitive import *
 from src.utils.general import extract_obj, create_save_path, prepare_task_data
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 # ---------------------------------------------------------------------------
@@ -305,20 +308,21 @@ def main() -> None:
     print(args, flush=True)
 
     # Load melody train tasks
-    task_path = "../data/task/train_notes_wo_break_104.obj"
+    task_path = REPO_ROOT / "data" / "task" / "train_notes_wo_break_104.obj"
     task_data = prepare_task_data(task_path, args.random_seed, args.random_seq)
 
     # Create output directory
     full_folder_path = create_save_path(args)
 
     # Load primitive production table and initialise grammar + compressor
-    init_pm = pd.read_csv("../data/primitive/task_pm.csv", index_col=0, na_filter=False)
+    primitive_path = REPO_ROOT / "data" / "primitive"
+    init_pm = pd.read_csv(primitive_path / "task_pm.csv", index_col=0, na_filter=False)
     _, compressor = initialize_program_library(args.curriculum, init_pm, args)
 
     # Pre-load sampled program frames if frame_gen == "sample";
     frames = (
         [
-            pd.read_csv(f"../data/primitive/task_frames_{i}.csv", index_col=0)
+            pd.read_csv(primitive_path / f"task_frames_{i}.csv", index_col=0)
             for i in range(1, args.frame_depth + 1)
         ]
         if args.frame_gen == "sample"

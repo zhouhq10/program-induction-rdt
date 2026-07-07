@@ -25,6 +25,7 @@ sys.path.append("../")
 
 import os
 import argparse
+from pathlib import Path
 import pandas as pd
 
 from src.utils.general import prepare_task_data, create_save_path
@@ -34,6 +35,8 @@ from src.domain.melody.greedy_dp_compressor import (
     GreedyDP_PCFGCompressor,
     GreedyDP_AGCompressor,
 )
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -206,8 +209,8 @@ def main() -> None:
     print(args, flush=True)
 
     # Load melody train tasks
-    base_path = "../data/primitive"
-    task_path = "../data/task/train_notes_wo_break_104.obj"
+    base_path = REPO_ROOT / "data" / "primitive"
+    task_path = REPO_ROOT / "data" / "task" / "train_notes_wo_break_104.obj"
     task_data = prepare_task_data(task_path, args.random_seed, args.random_seq)
 
     # Create output directory
@@ -216,7 +219,7 @@ def main() -> None:
     # Load curriculum-specific production table; each baseline uses a
     # restricted set of primitives encoded in a separate CSV.
     init_pm = pd.read_csv(
-        os.path.join(base_path, f"task_pm_{args.curriculum}.csv"),
+        base_path / f"task_pm_{args.curriculum}.csv",
         index_col=0,
         na_filter=False,
     )

@@ -4,10 +4,13 @@ sys.path.append("..")
 
 import pandas as pd
 import pickle, argparse
+from pathlib import Path
 
 from src.program.primitive import *
 from src.program.grammar import Grammar
 from src.domain.melody.melody_primitive import melody_primitive_list
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
@@ -23,7 +26,7 @@ def main():
     parser.add_argument(
         "--output_pickle_path",
         type=str,
-        default="../data/{}/task_pm.obj",
+        default="data/{}/task_pm.obj",
         help="Path for the output pickle file.",
     )
     args = parser.parse_args()
@@ -131,14 +134,17 @@ def main():
     grammar.production = grammar.update_overall_lp()
 
     # ----- Save the updated pm_task -----
-    output_path = args.output_pickle_path.format(args.task)
+    output_path = Path(args.output_pickle_path.format(args.task))
+    if not output_path.is_absolute():
+        output_path = REPO_ROOT / output_path
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "wb") as f:
         pickle.dump(pm_task, f)
 
     # For visualization
     pm_task[
         ["term", "arg_type", "ret_type", "type_string", "ctype", "is_init", "count"]
-    ].to_csv(output_path.replace(".obj", ".csv"))
+    ].to_csv(output_path.with_suffix(".csv"))
 
 
 if __name__ == "__main__":

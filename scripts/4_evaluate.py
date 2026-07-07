@@ -7,6 +7,7 @@ import re
 import os
 import pickle
 import random
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from random import sample
@@ -22,6 +23,8 @@ from src.domain.melody.greedy_dp_compressor import (
 )
 
 import argparse
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 default_params = {
     "lib_size": 10000,
@@ -173,10 +176,10 @@ def main():
     print(args, flush=True)
 
     # Prep data
-    base_path = "../data/melody"
+    base_path = REPO_ROOT / "data" / "primitive"
 
     # Initialize task data
-    task_data = load_pickle("../data/task/evaluation_notes_wo_break_52.obj")
+    task_data = load_pickle(REPO_ROOT / "data" / "task" / "evaluation_notes_wo_break_52.obj")
     task_data = [np.array(x) for x in task_data]
     # Set a random seed for reproducibility
     random.seed(args.random_seed)
@@ -210,7 +213,7 @@ def main():
     if "pcfg" in args.explog_base_path:
         # Prep frame and primitive data
         init_pm = pd.read_csv(
-            os.path.join(base_path, "task_pm.csv"), index_col=0, na_filter=False
+            base_path / "task_pm.csv", index_col=0, na_filter=False
         )
         pl = Grammar(production=init_pm)
         compressor = GreedyDP_PCFGCompressor(pl, args)
@@ -232,7 +235,7 @@ def main():
         )
         global_table = load_pickle(global_table_path)[-1]
         init_pm = pd.read_csv(
-            os.path.join(base_path, "task_pm.csv"), index_col=0, na_filter=False
+            base_path / "task_pm.csv", index_col=0, na_filter=False
         )
         constrain_iter_sample_hag(
             init_pm=init_pm,
