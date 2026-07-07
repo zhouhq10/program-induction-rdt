@@ -2,6 +2,7 @@ let reward;
 let experimentData;
 let assignmentID;
 let scenarioId
+const PREVIEW_MODE = window.location.hostname.endsWith("github.io") || window.location.protocol === "file:";
 
 var fullurl = document.location.href, //url of incoming MTurk/prolific worker, used to extract workerid and assignmentid
     workerID
@@ -26,6 +27,13 @@ var fullurl = document.location.href, //url of incoming MTurk/prolific worker, u
     }
 
     function getExperimentData(workerID) {
+        if (PREVIEW_MODE) {
+            experimentData = {};
+            reward = 0;
+            assignmentID = "";
+            scenarioId = 0;
+            return experimentData;
+        }
         var ajaxRequest = new XMLHttpRequest();
         ajaxRequest.onreadystatechange = function() {
             if (ajaxRequest.readyState === 4) {
@@ -54,7 +62,6 @@ var fullurl = document.location.href, //url of incoming MTurk/prolific worker, u
                     console.error("Error with AJAX request:", ajaxRequest.statusText);
                 }
             } };
-            console.log("workerID",workerID)
             var queryString = "?action=getExperimentData&workerID=" + encodeURIComponent(workerID);
             ajaxRequest.open("GET", "databasecall.php" + queryString, true);
             ajaxRequest.send();
@@ -122,6 +129,11 @@ beginExperiment()
 });
 
 function senddata(surveyData) {
+    if (PREVIEW_MODE || scenarioId === 0) {
+        experimentData = Object.assign(experimentData || {}, { surveyData });
+        return;
+    }
+
     // Combine experimentData with surveyData
  
     const extraData = { surveyData };

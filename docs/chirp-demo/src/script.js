@@ -2534,6 +2534,12 @@
             };
     
             const formattedReward = reward.toFixed(2);
+
+            if (scenarioId === 0 || window.location.hostname.endsWith("github.io")) {
+                console.info("Preview mode: skipping data save.");
+                resolve("preview");
+                return;
+            }
     
             // Create FormData
             const formdata = new FormData();
@@ -2768,7 +2774,6 @@
     //     // document.getElementById('reward').textContent = roundBonus[Math.floor(Math.random() * roundBonus.length)];
 
     // }
-
 
 
 
