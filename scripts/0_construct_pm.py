@@ -8,7 +8,7 @@ from pathlib import Path
 
 from src.program.primitive import *
 from src.program.grammar import Grammar
-from src.domain.melody.melody_primitive import melody_primitive_list
+from src.domain.melody.melody_primitive import melody_primitive_list, global_melody_pms
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -36,14 +36,10 @@ def main():
 
     # Add base primitives
     for i in range(1, 7):
-        note_var_name = f"note_{i}"
-        if note_var_name in globals():
-            pm_terms.append(globals()[note_var_name])
+        pm_terms.append(global_melody_pms[f"note_{i}"])
 
     for i in range(1, 7):
-        count_var_name = f"count_{i}"
-        if count_var_name in globals():
-            pm_terms.append(globals()[count_var_name])
+        pm_terms.append(global_melody_pms[f"count_{i}"])
 
     # Add function-level primitive
     pm_terms = pm_terms + melody_primitive_list
@@ -78,6 +74,15 @@ def main():
                 "arg_type": "note_note",
                 "ret_type": "note",
                 "type_string": "note_note->note",
+                "ctype": "program",
+            }
+        )
+        program_list.append(
+            {
+                "term": f"[BKK,I,{note}]",
+                "arg_type": "note_count_count",
+                "ret_type": "note",
+                "type_string": "note_count_count->note",
                 "ctype": "program",
             }
         )
@@ -122,11 +127,17 @@ def main():
     # ----- Construct and save primitive dataframe -----
     pm_task = pd.DataFrame.from_records(pm_setup).reset_index(drop=1)
     pm_task["is_init"] = int(1)
+    pm_task["frame"] = ""
+    pm_task["depth"] = 0
 
     # ----- Compute priors over primitives -----
     # Compute priors over primitives, now everything is uniform given paired input-output types
+    # prior_uniform_per_type only returns base terms and primitives, so seed programs are added back
     grammar = Grammar(production=pm_task)
-    grammar.production = grammar.prior_uniform_per_type()
+    seed_progs = pm_task[pm_task["ctype"] == "program"].assign(comp_lp=0.0)
+    grammar.production = pd.concat(
+        [grammar.prior_uniform_per_type(), seed_progs], ignore_index=True
+    )
 
     # Compute adaptor priors over programs
     # Since we are initializing the priors, we do not consider AG here (count-based)
@@ -139,13 +150,13 @@ def main():
     if not output_path.is_absolute():
         output_path = REPO_ROOT / output_path
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    # The initial library for compression has no programs; seed programs are
+    # only used by 1_construct_frame.py so that frames contain PM(...) slots
+    pm_lib = pm_task[pm_task["ctype"] != "program"].reset_index(drop=True)
     with open(output_path, "wb") as f:
-        pickle.dump(pm_task, f)
-
-    # For visualization
-    pm_task[
-        ["term", "arg_type", "ret_type", "type_string", "ctype", "is_init", "count"]
-    ].to_csv(output_path.with_suffix(".csv"))
+        pickle.dump(pm_lib, f)
+    pm_lib.to_csv(output_path.with_suffix(".csv"))
+    pm_task.to_csv(output_path.with_name(output_path.stem + "_with_seeds.csv"))
 
 
 if __name__ == "__main__":

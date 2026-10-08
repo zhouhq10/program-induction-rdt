@@ -2535,7 +2535,7 @@
     
             const formattedReward = reward.toFixed(2);
 
-            if (scenarioId === 0 || window.location.hostname.endsWith("github.io")) {
+            if (scenarioId === 0 || /(^|\.)(github\.io|hf\.space|huggingface\.co)$|^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)) {
                 console.info("Preview mode: skipping data save.");
                 resolve("preview");
                 return;

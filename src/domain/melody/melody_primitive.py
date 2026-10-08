@@ -20,9 +20,9 @@ Seven melody-specific primitive functions are provided:
 ``memorize``   Identity: returns the stored note sequence.
 ``repeat``     Tile a sequence ``count`` times.
 ``reverse``    Append a reversed copy of a sequence to itself.
-``up``         Append a copy shifted up by ``count`` (mod 6).
-``down``       Append a copy shifted down by ``count`` (mod 6).
-``ranges``     Ascending scale: append ``count`` +1-shifted copies.
+``up``         Append ``count`` copies, each shifted +1 from the last (mod 6).
+``down``       Append ``count`` copies, each shifted -1 from the last (mod 6).
+``ranges``     Append ``count`` copies, each shifted by ``step`` (mod 6).
 ``concatenate`` Concatenate two note sequences.
 =============  ====================================================
 
@@ -180,24 +180,21 @@ up = Primitive(
     arrow(tcount, arrow(tnote, tnote)),
     ["note", "count"],
     ["note"],
-    # Append a copy shifted up by x[1] semitones (mod 6, values in {1,...,6})
-    lambda x: (np.concatenate([x[0], x[0] + x[1]], -1) - 1) % 6 + 1,
+    lambda x: single_range(x[0], x[1], step=1),
 )
 down = Primitive(
     "down",
     arrow(tcount, arrow(tnote, tnote)),
     ["note", "count"],
     ["note"],
-    # Append a copy shifted down by x[1] semitones (mod 6, values in {1,...,6})
-    lambda x: (np.concatenate([x[0], x[0] - x[1]], -1) - 1) % 6 + 1,
+    lambda x: single_range(x[0], x[1], step=-1),
 )
 ranges = Primitive(
     "ranges",
-    arrow(tcount, arrow(tnote, tnote)),
-    ["note", "count"],
+    arrow(tcount, arrow(tcount, arrow(tnote, tnote))),
+    ["note", "count", "count"],
     ["note"],
-    # Generate ascending scale: append x[1] copies each shifted +1 from the last
-    lambda x: single_range(x[0], x[1]),
+    lambda x: single_range(x[0], x[2], step=x[1]),
 )
 concatenate = Primitive(
     "concatenate",

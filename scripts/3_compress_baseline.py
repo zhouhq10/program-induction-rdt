@@ -7,7 +7,8 @@ space to test specific inductive biases:
 * ``chunk`` — Chunking baseline: programs are restricted to type signatures
   with note arguments only (``note->note``, ``note_note->note``, etc.).
   This forces the model to chunk melodies into memorised subsequences via
-  the ``memorize`` primitive, analogous to a simple chunking model.
+  the ``memorize`` and ``concatenate`` primitives, analogous to a simple
+  chunking model.
 
 * ``RLE`` — Run-Length Encoding baseline: programs are restricted to type
   signatures involving ``count`` tokens (``note_count->note``, etc.).
@@ -50,7 +51,7 @@ def parse_arguments() -> argparse.Namespace:
         "--curriculum",
         type=str,
         default="chunk",
-        help="Baseline curriculum: 'chunk' (memorise-only) | 'RLE' (repeat-only).",
+        help="Baseline curriculum: 'chunk' (memorize + concatenate) | 'RLE' (repeat-only).",
     )
 
     # ---- Computation / frame options ---------------------------------------
@@ -238,7 +239,7 @@ def main() -> None:
 
     # Restrict type signatures to match the baseline's program space
     if args.curriculum == "chunk":
-        # Chunking: only note-typed arguments — forces memorise-primitive use
+        # Chunking: only note-typed arguments — memorize and concatenate
         program_lib.type_strings = [
             "note->note",
             "note_note->note",

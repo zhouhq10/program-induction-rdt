@@ -2,7 +2,9 @@ let reward;
 let experimentData;
 let assignmentID;
 let scenarioId
-const PREVIEW_MODE = window.location.hostname.endsWith("github.io") || window.location.protocol === "file:";
+// Public demo hosts (GitHub Pages, Hugging Face Spaces) and local files have no backend
+const PREVIEW_MODE = /(^|\.)(github\.io|hf\.space|huggingface\.co)$|^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
+    || window.location.protocol === "file:";
 
 var fullurl = document.location.href, //url of incoming MTurk/prolific worker, used to extract workerid and assignmentid
     workerID

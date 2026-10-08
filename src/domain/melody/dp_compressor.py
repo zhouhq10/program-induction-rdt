@@ -35,15 +35,16 @@ from src.domain.melody.melody_primitive import (
     create_or_get_pm_from_cache,
 )
 from src.domain.melody.base_compressor import Compressor
+from src.domain.melody.melody_utils import log_prob_note
 from src.utils.general import *
 
 EPS = 1e-6
 
 # Log-probability constants for the memorise primitive:
 #   p(memorise) = 0.25  (probability of choosing the memorise frame type)
-#   p(note_i)   = 1/6   (uniform over 6 note values per position)
+#   p(note_i)   = 1/NUM_NOTES (uniform over note values per position),
+#                 see melody_utils.log_prob_note
 LOG_PROB_MEM = np.log(0.25) + np.log(1 / 7)
-LOG_PROB_NOTE = np.log(1 / 6)
 
 
 # ---------------------------------------------------------------------------
@@ -134,7 +135,7 @@ class DPCompressor(Compressor):
         note_name = Note.array_to_string(subtask)
         possible_notes = create_or_get_pm_from_cache(note_name)
 
-        log_prog_whole = LOG_PROB_MEM + LOG_PROB_NOTE * num_note
+        log_prog_whole = LOG_PROB_MEM + log_prob_note() * num_note
         memorized_progs = pd.DataFrame(
             {
                 "term": f"[K,memorize,{possible_notes.name}]",
@@ -418,7 +419,7 @@ class DP_PCFGCompressor(DPCompressor):
             Tuple ``(rate, distortion, prog_list)`` for the optimal
             segmentation of this melody:
             - ``rate``: Total negative log-probability of selected programs.
-            - ``distortion``: Total Levenshtein distortion.
+            - ``distortion``: Total Hamming distortion.
             - ``prog_list``: DataFrame of all selected programs.
         """
         n = len(task)

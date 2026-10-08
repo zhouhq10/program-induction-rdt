@@ -11,4 +11,5 @@
 9,count_4,,count,->count,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
 10,count_5,,count,->count,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
 11,count_6,,count,->count,base_term,1,1,-1.791759469228055,0,-1.791759469228055,,0
-12,memorize,note,note,note->note,primitive,1,1,-1.9459101490553135,0,-1.9459101490553135,,0
+12,memorize,note,note,note->note,primitive,1,1,-0.6931471805599453,0,-0.6931471805599453,,0
+17,concatenate,note_note,note,note_note->note,primitive,1,1,-0.6931471805599453,0,-0.6931471805599453,,0

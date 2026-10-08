@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Melody Program Induction</title>
+<meta name="description" content="Compress melodies into programs in your browser and watch the program library grow. Demo for Harmonizing Program Induction with Rate-Distortion Theory (CogSci 2024).">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="title">
+      <h1>Melody program induction</h1>
+      <p><a href="https://github.com/zhouhq10/program-induction-rdt"><i>Harmonizing Program
+        Induction with Rate-Distortion Theory</i></a>, CogSci 2024 ·
+        <a href="experiment/index.html">Try the experiment</a></p>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-explore" aria-controls="view-explore" aria-selected="true">Explore</button>
+      <button class="tab" role="tab" id="tab-tutorial" aria-controls="view-tutorial" aria-selected="false">Tutorial</button>
+      <button class="tab" role="tab" id="tab-recorder" aria-controls="view-recorder" aria-selected="false">Bad recorder</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ================= Explore ================= -->
+  <div id="view-explore" role="tabpanel" aria-labelledby="tab-explore" class="explore">
+    <aside class="panel sticky">
+      <label for="melodies">Melody <span class="hint">— one segment per line</span></label>
+      <textarea id="melodies" spellcheck="false" aria-describedby="melody-hint"></textarea>
+      <div class="hint" id="melody-hint" style="font-size:12px">Notes C E F G A B or 1–6</div>
+      <div class="chips" id="examples"></div>
+
+      <div class="field">
+        <span class="label">Model</span>
+        <div class="seg" role="radiogroup" aria-label="Model">
+          <input type="radio" name="model" id="m-pcfg" value="PCFG"><label for="m-pcfg">PCFG</label>
+          <input type="radio" name="model" id="m-ag" value="AG"><label for="m-ag">AG</label>
+          <input type="radio" name="model" id="m-hag" value="HAG" checked><label for="m-hag">HAG</label>
+        </div>
+        <div class="model-desc" id="model-desc"></div>
+      </div>
+
+      <details class="param-group">
+        <summary>Memory</summary>
+        <div class="param" data-param="beta" data-min="0" data-max="5" data-step="0.05" data-value="1"
+             data-label="β" data-hint="↑ shorter, more errors"></div>
+        <label class="check" title="Only programs with no wrong notes"><input type="checkbox" id="p-lossless"> Lossless</label>
+        <div class="param-sub" id="beta-note" hidden>β has no effect when lossless</div>
+      </details>
+      <details class="param-group" data-models="AG HAG">
+        <summary>Reuse</summary>
+        <div class="param-sub" data-models="HAG">Local</div>
+        <div class="param" data-models="HAG" data-param="local_alpha" data-min="0.1" data-max="10" data-step="0.1" data-value="1"
+             data-label="α" data-hint="lower → more reuse"></div>
+        <div class="param" data-models="HAG" data-param="local_d" data-min="0" data-max="0.9" data-step="0.05" data-value="0.2"
+             data-label="d" data-hint="discount"></div>
+        <div class="param-sub">Global</div>
+        <div class="param" data-param="global_alpha" data-min="0.1" data-max="10" data-step="0.1" data-value="1"
+             data-label="α" data-hint="lower → more reuse"></div>
+        <div class="param" data-param="global_d" data-min="0" data-max="0.9" data-step="0.05" data-value="0.2"
+             data-label="d" data-hint="discount"></div>
+      </details>
+      <details class="param-group">
+        <summary>Search</summary>
+        <div class="param-sub">Program choice</div>
+        <div class="seg small" role="radiogroup" aria-label="Program choice">
+          <input type="radio" name="selection" id="sel-best" value="best" checked><label for="sel-best" title="Take the highest-value program">Best</label>
+          <input type="radio" name="selection" id="sel-sample" value="sample"><label for="sel-sample" title="Sample ∝ exp(value), as in the paper's greedy model">Sample</label>
+        </div>
+        <div class="param" data-param="search_budget" data-min="1" data-max="20" data-step="1" data-value="5"
+             data-label="Search budget"></div>
+        <div class="param" data-param="frame_depth" data-min="1" data-max="3" data-step="1" data-value="2"
+             data-label="Max depth"></div>
+        <div class="param" data-param="submelody_backtrack_budget" data-min="0" data-max="4" data-step="1" data-value="2"
+             data-label="Backtracking"></div>
+        <div class="param" data-param="seed" data-min="0" data-max="20" data-step="1" data-value="0"
+             data-label="Random seed"></div>
+      </details>
+
+      <div class="actions">
+        <button class="primary" id="run">Compress</button>
+        <button class="secondary" id="sweep" title="Run β = 0.25, 0.5, 1, 2, 4 with the other settings fixed">Sweep β</button>
+        <button class="secondary" id="stop" disabled>Stop</button>
+      </div>
+      <div id="status" role="status" aria-live="polite"></div>
+    </aside>
+
+    <section class="col-results">
+      <div class="panel">
+        <h2>Runs</h2>
+        <div class="runs">
+          <div class="rd-plot" id="rd-plot"></div>
+          <div class="run-list table-wrap" id="run-list"><p class="empty">Runs appear here.</p></div>
+        </div>
+      </div>
+      <div class="results-head">
+        <h2 id="results-title">Results</h2>
+        <div class="legend" id="legend">
+          <span><span class="note out n3">F</span> output</span>
+          <span><span class="note out wrong n4">G</span> wrong</span>
+          <label class="toggle"><input type="checkbox" id="show-raw"> raw terms</label>
+        </div>
+      </div>
+      <div id="results"></div>
+    </section>
+
+    <aside class="col-library panel sticky">
+      <h2 id="library-title">Library</h2>
+      <div class="lib-step" id="lib-step"></div>
+      <div class="lib-scroll" id="library"><p class="empty">Cached programs appear here.</p></div>
+    </aside>
+  </div>
+
+  <!-- ================= Tutorial ================= -->
+  <div id="view-tutorial" role="tabpanel" aria-labelledby="tab-tutorial" class="tutorial" hidden>
+    <section class="panel">
+      <h2>1. Melodies as programs</h2>
+      <p>A melody can be stored note by note, or as a short <b>program</b> that generates it.
+        Programs are cheaper to store when the melody has structure — repetition, scales, mirror images.
+        The model looks for programs that describe a melody well, and with a library it can reuse
+        programs that worked before.</p>
+      <div class="callout">
+        <div class="melody-head"><span class="label" style="margin:0">Example melody</span></div>
+        <div class="tut-example" data-melody="1 2 3 1 2 3 1 2 3 4 5 6"
+             data-programs="[KK,[repeat,note_1_2_3],count_3]|[K,[up,note_4],count_2]"></div>
+        <p style="margin:10px 0 0">As notes this takes 12 symbols. As programs it is
+          <i>repeat C E F three times</i>, then <i>start at G and go up twice</i>.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>2. The notes</h2>
+      <p>Six notes, from low to high. Click a note to hear it. Steps <i>up</i> and <i>down</i> move to the
+        neighbouring note, and wrap around: one step up from B is C.</p>
+      <div class="tut-notes" id="tut-notes"></div>
+    </section>
+
+    <section class="panel">
+      <h2>3. Primitives</h2>
+      <p>The building blocks. In the Explore tab programs are shown in this function form, e.g.
+        <code>repeat(C F, 3)</code>; tick <i>raw terms</i> there to see how they are actually written.</p>
+      <div class="table-wrap">
+        <table class="prim-table">
+          <thead><tr><th>Primitive</th><th>What it does</th><th>Example</th><th>Output</th></tr></thead>
+          <tbody id="prim-table"></tbody>
+        </table>
+      </div>
+      <h3>Composing primitives</h3>
+      <p>The output of one primitive can be the input of another:</p>
+      <div class="table-wrap">
+        <table class="prim-table"><tbody id="compose-table"></tbody></table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>4. Combinators</h2>
+      <p>Programs are written as nested triples <code>[r, f, x]</code>: apply <code>f</code> to
+        <code>x</code>, where the <b>router</b> <code>r</code> says where each of the program's own
+        inputs goes. This is how a program can leave some arguments open — for example a library
+        program of type <code>note_count→note</code> still takes a note and a count. A router has one
+        letter per input:</p>
+      <div class="table-wrap">
+        <table class="prim-table">
+          <thead><tr><th>Letter</th><th>The input goes to…</th></tr></thead>
+          <tbody>
+            <tr><td><code>B</code></td><td>the argument <code>x</code> only</td></tr>
+            <tr><td><code>C</code></td><td>the function <code>f</code> only</td></tr>
+            <tr><td><code>S</code></td><td>both <code>f</code> and <code>x</code></td></tr>
+            <tr><td><code>K</code></td><td>neither — it is discarded</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>For example <code>[KK,[repeat,note_4],count_3]</code> discards both of its two inputs and
+        computes <code>repeat(G, 3)</code>. When all arguments are filled in, as in the programs the
+        model outputs, you can read <code>[r, f, x]</code> simply as <i>f applied to x</i>. Arguments
+        are written <code>note_1_3</code> (the notes C F) and <code>count_3</code> (the number 3).</p>
+    </section>
+
+    <section class="panel">
+      <h2>5. Rate, distortion and β</h2>
+      <div class="grid-2">
+        <div>
+          <p><b>Rate</b> is how much it costs to store the programs: −log of their prior probability
+            under the grammar, in nats. Long, unusual programs have a high rate.</p>
+          <p><b>Distortion</b> is how many notes the programs get wrong: the Hamming distance
+            (positions that differ) between each melody segment and the program's output.</p>
+        </div>
+        <div>
+          <p>The model minimises</p>
+          <p class="formula">distortion + β · rate</p>
+          <p>With a small β it prefers exact but long programs (often <code>memorize</code>); with a
+            large β it prefers short programs even if they make mistakes. <b>Sweep β</b> in the Explore
+            tab traces this trade-off.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>6. Libraries: PCFG, AG and HAG</h2>
+      <div class="grid-2">
+        <div>
+          <p>A melody is split into segments — one per line in the Explore tab — that are compressed in order.</p>
+          <p><b>PCFG</b> — a fixed grammar with no library. Every segment is compressed from scratch.</p>
+          <p><b>AG</b> (adaptor grammar) — one global library. Programs used in a melody are cached once the
+            whole melody is done, and become cheaper to reuse in later melodies.</p>
+          <p><b>HAG</b> (hierarchical AG) — a local library is built up segment by segment, so programs from
+            earlier segments become cheaper in later ones. After the melody they are merged into the global
+            library.</p>
+        </div>
+        <div>
+          <p>The libraries follow a Pitman–Yor process. With <i>m</i> different programs used
+            <i>n</i> times in total, a <b>new</b> program is built with probability</p>
+          <p class="formula">(α + d·m) / (α + n)</p>
+          <p>and a cached program used <i>k</i> times is reused with probability
+            <span class="mono">(k − d) / (α + n)</span>. Larger α and d favour new programs; smaller
+            values favour reuse.</p>
+        </div>
+      </div>
+      <p><button class="primary" id="try-it" style="flex:none">Try the example in Explore →</button></p>
+    </section>
+  </div>
+
+  <!-- ================= Bad recorder ================= -->
+  <div id="view-recorder" role="tabpanel" aria-labelledby="tab-recorder" class="recorder" hidden>
+    <section class="panel">
+      <h2>The bad recorder</h2>
+      <p>Playing a tune from memory is lossy compression: you keep the gist and lose a few notes.
+        Here the model stores each phrase of a tune as a program, with seven notes and no rhythm.
+        Each player has a different β — the larger it is, the more the player wants a short program,
+        and the more notes it gets wrong. Pick a tune and listen.</p>
+      <div class="chips" id="rec-tunes" role="group" aria-label="Tune"></div>
+      <details class="rec-custom" id="rec-custom">
+        <summary>Your own tune</summary>
+        <label for="rec-input" class="sr-only">Your tune</label>
+        <textarea id="rec-input" spellcheck="false" aria-describedby="rec-hint"></textarea>
+        <div class="hint" id="rec-hint" style="font-size:12px">One phrase per line, at most 40 notes each.
+          Notes C D E F G A B (transpose to C major, no sharps or flats); add <code>'</code> or
+          <code>,</code> for an octave up or down, e.g. <code>G, C E G C'</code>. Each player takes
+          a little while, since the model runs in your browser.</div>
+        <div class="actions">
+          <button class="primary" id="rec-run">Perform</button>
+          <button class="secondary" id="rec-stop" disabled>Stop</button>
+        </div>
+      </details>
+      <div id="rec-status" class="status-line" role="status" aria-live="polite"></div>
+    </section>
+    <div id="rec-stage"></div>
+  </div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

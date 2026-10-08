@@ -4,7 +4,8 @@ sys.path.append("..")
 
 import numpy as np
 import pandas as pd
-import argparse, re, os
+import argparse, re, os, random
+from multiprocessing import Pool
 from pathlib import Path
 
 from src.program.grammar import Grammar
@@ -17,6 +18,52 @@ def check_remove_memorize(frames: pd.DataFrame) -> pd.DataFrame:
     """Removes rows where 'term' contains 'memorize'."""
     frames = frames[~frames["term"].str.contains("memorize")]
     return frames.reset_index(drop=True)
+
+
+_worker_grammar = None
+
+
+def _init_worker(pm_path):
+    global _worker_grammar
+    _worker_grammar = Grammar(production=pd.read_csv(pm_path, index_col=0))
+
+
+def _sample_batch(job):
+    """Draw ``n`` frames of ``depth`` in a worker process (duplicates included)."""
+    seed, types, depth, n = job
+    np.random.seed(seed)
+    random.seed(seed)
+    rows = []
+    for _ in range(n):
+        t = types[np.random.randint(len(types))]
+        progs = _worker_grammar.enumerate_one_typed_bfs(type_signature=t, depth=depth)
+        if not progs.empty:
+            rows.append(check_remove_memorize(progs))
+    return pd.concat(rows) if rows else pd.DataFrame()
+
+
+def sample_frames(pm_path, types, depth, num_frames, num_workers, seed, batch=200):
+    """Sample up to num_frames unique frames (memorize-free) of the given depth.
+
+    Workers draw frames in parallel; stops early once a whole round of batches
+    yields no new frame, i.e. when the space of frames is close to exhausted.
+    """
+    seen = {}
+    round_ = 0
+    with Pool(num_workers, initializer=_init_worker, initargs=(pm_path,)) as pool:
+        while len(seen) < num_frames:
+            jobs = [(seed * 100003 + round_ * num_workers + w, types, depth, batch)
+                    for w in range(num_workers)]
+            round_ += 1
+            before = len(seen)
+            for frames in pool.imap_unordered(_sample_batch, jobs):
+                for _, row in frames.iterrows():
+                    seen.setdefault((row["term"], row["type_string"]), row)
+            print(f"depth {depth}: {len(seen)} frames", flush=True)
+            if len(seen) == before:
+                break
+    frames = pd.DataFrame(list(seen.values())).reset_index(drop=True)
+    return frames.head(num_frames)
 
 
 def power_law_dist(N: int, alpha: float = 1) -> np.ndarray:
@@ -46,7 +93,7 @@ def main():
         type=int,
         nargs="+",
         default=[1, 2, 3],
-        help="Depths of programs to generate (enumerate mode).",
+        help="The depths of the programs to generate (enumerate mode), e.g. --depth 1 2.",
     )
     parser.add_argument(
         "--max_depth",
@@ -84,6 +131,24 @@ def main():
         default="outputs/pcfg_frame",
         help="Base path for saving frames.",
     )
+    parser.add_argument(
+        "--max_enum_depth",
+        type=int,
+        default=1,
+        help="Depths above this are sampled instead of enumerated (enumerate mode).",
+    )
+    parser.add_argument(
+        "--num_sampled_frames",
+        type=int,
+        default=30000,
+        help="Number of unique frames to sample per depth above --max_enum_depth.",
+    )
+    parser.add_argument(
+        "--num_workers",
+        type=int,
+        default=max(1, (os.cpu_count() or 2) - 1),
+        help="Worker processes for sampling frames.",
+    )
     parser.add_argument("--random_seed", type=int, default=0, help="Random seed.")
     args = parser.parse_args()
     save_path = Path(args.save_path)
@@ -91,7 +156,9 @@ def main():
         save_path = REPO_ROOT / save_path
 
     # Load primitive model and build grammar
-    pm_init = pd.read_csv(REPO_ROOT / "data" / args.task / "task_pm.csv", index_col=0)
+    # Seed programs are needed so that frames contain PM(...) slots
+    pm_path = REPO_ROOT / "data" / args.task / "task_pm_with_seeds.csv"
+    pm_init = pd.read_csv(pm_path, index_col=0)
     pl = Grammar(production=pm_init)
 
     # Input-output type signatures
@@ -101,8 +168,9 @@ def main():
     t3 = [["note", "note", "note"], "note"]
     t4 = [["note", "note", "count"], "note"]
     t5 = [["note", "count", "note"], "note"]
+    t6 = [["note", "count", "count"], "note"]
 
-    types = [t0, t1, t2, t3, t4, t5]
+    types = [t0, t1, t2, t3, t4, t5, t6]
     type_strings = [Placeholder.complete_typelist_to_string(t[0], t[1]) for t in types]
 
     if args.frame_gen == "sample":
@@ -148,14 +216,23 @@ def main():
     else:
         frame_dir = save_path / "all_frames_given_depth_and_typestring"
         frame_dir.mkdir(parents=True, exist_ok=True)
+        np.random.seed(args.random_seed)
+        random.seed(args.random_seed)  # router choice in enumerate_one_typed_bfs
         for depth in args.depth:
-            rfs = []
-            for t in types:
-                progs = pl.enumerate_typed_bfs(type_signature=t, depth=depth)
-                print(t)
-                rfs.append(progs)
-            combined = pd.concat(rfs).reset_index(drop=True)
-            combined = check_remove_memorize(combined)
+            if depth > args.max_enum_depth:
+                combined = sample_frames(
+                    pm_path, types, depth, args.num_sampled_frames,
+                    args.num_workers, args.random_seed,
+                )
+            else:
+                rfs = []
+                for t in types:
+                    progs = pl.enumerate_typed_bfs(type_signature=t, depth=depth)
+                    print(t)
+                    rfs.append(progs)
+                combined = pd.concat(rfs).reset_index(drop=True)
+                combined = check_remove_memorize(combined)
+            print(f"depth {depth}: {len(combined)} frames")
             combined.to_csv(
                 frame_dir / f"task_frames_{depth}.csv"
             )

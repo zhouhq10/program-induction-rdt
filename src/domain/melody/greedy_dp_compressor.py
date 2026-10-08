@@ -49,6 +49,7 @@ from src.domain.melody.melody_primitive import (
     create_or_get_pm_from_cache,
 )
 from src.domain.melody.base_compressor import Compressor
+from src.domain.melody.melody_utils import log_prob_note
 
 EPS = 1e-6
 NUM_MELODY = 5
@@ -70,6 +71,9 @@ class GreedyDPCompressor(Compressor):
         self.submelody_backtrack_budget = args.submelody_backtrack_budget
         self.lossless = args.lossless
         self.frame_gen = args.frame_gen
+        # "sample": choose a program with probability ∝ exp(value) (default);
+        # "best": always choose the highest-value program
+        self.selection = getattr(args, "selection", "sample")
 
         # Save the initial production memory
         self.init_pm = self.lib.production
@@ -127,6 +131,11 @@ class GreedyDPCompressor(Compressor):
         cur_all_progs["recon_len"] = cur_all_progs["recon"].apply(len)
         return cur_all_progs
 
+    @staticmethod
+    def _sample_poisson(mean: float, min_value: int = 0) -> int:
+        """Draw an integer budget from Poisson(mean), clipped below at ``min_value``."""
+        return max(min_value, int(np.random.poisson(mean)))
+
     def _calculate_cost(self, program: pd.DataFrame) -> float:
         """Compute the RD cost of a program sequence.
 
@@ -179,9 +188,7 @@ class GreedyDPCompressor(Compressor):
         possible_notes = create_or_get_pm_from_cache(note_name)
 
         log_prob_memorize = np.log(0.25) + np.log(1 / 7)
-        log_prob_note = np.log(1 / 6)
-
-        log_prog_whole = log_prob_memorize + log_prob_note * num_note
+        log_prog_whole = log_prob_memorize + log_prob_note() * num_note
         memorized_progs = pd.DataFrame(
             {
                 "term": f"[K,memorize,{possible_notes.name}]",
@@ -293,6 +300,11 @@ class GreedyDPCompressor(Compressor):
             prog = self._comp_subprog_recon_len(prog, subtask)
             prog = self._comp_subprog_value(prog, subtask)
 
+            if self.lossless:
+                prog = prog[prog["log_ll"] > 0]
+                if prog.empty:
+                    return prog
+
             if not self.args.lossless_error:
                 prog = prog.loc[[prog["value"].idxmax()]]
 
@@ -315,11 +327,12 @@ class GreedyDPCompressor(Compressor):
 
         # Sample one subprograms among all candidates
         # NOTE: this is different than the original dp which chooses the best program
-        chosen_subprog = (
-            progs.sample(n=1, weights=np.exp(progs["value"]) + EPS)
-            if len(progs) > 1
-            else progs
-        )
+        if len(progs) <= 1:
+            chosen_subprog = progs
+        elif self.selection == "best":
+            chosen_subprog = progs.loc[[progs["value"].idxmax()]]
+        else:
+            chosen_subprog = progs.sample(n=1, weights=np.exp(progs["value"]) + EPS)
         return frames, chosen_subprog
 
     def _fill_frame_fly(
@@ -344,18 +357,8 @@ class GreedyDPCompressor(Compressor):
         filled_progs = []
         unfilled_frames = []
 
-        # Sample the type string and depth
-        def _sample_search_budget_power_law(search_budget, alpha=2.0):
-            if search_budget == 1:
-                return 1
-            rng = np.random.default_rng()
-            values = np.arange(1, search_budget + 1)
-            weights = values ** (-alpha)
-            probs = weights / weights.sum()
-            return int(rng.choice(values[::-1], p=probs))
-
-        # search_budget = _sample_search_budget_power_law(self.search_budget)
-        search_budget = int(self.search_budget)
+        # Number of frames tried at this step: Ns ~ Poisson(search_budget), at least 1
+        search_budget = self._sample_poisson(self.search_budget, min_value=1)
         type_string_list = self.sample_type_string_subtask(num_sample=search_budget)
         depth_list = self.sample_depth_subtask(num_sample=search_budget)
 
@@ -375,6 +378,13 @@ class GreedyDPCompressor(Compressor):
             # Compute the reconstruction length and value
             filled_prog = self._comp_subprog_recon_len(filled_prog, subtask)
             filled_prog = self._comp_subprog_value(filled_prog, subtask)
+
+            # In lossless mode, filter before choosing so that an exact program
+            # is not discarded in favour of a lossy one with a higher value
+            if self.lossless:
+                filled_prog = filled_prog[filled_prog["log_ll"] > 0]
+                if filled_prog.empty:
+                    continue
 
             # Choose one filled programs among all candidates
             filled_prog = filled_prog.loc[[filled_prog["value"].idxmax()]]
@@ -537,29 +547,12 @@ class GreedyDP_PCFGCompressor(GreedyDPCompressor):
             tuple: Contains the final rate, distortion, and the program list.
         """
 
-        def _sample_backtrack_length(submelody_backtrack_budget, alpha=2.0):
-            """
-            Sample the backtrack length (integer) from the powerlaw distribution with the maximum length as submelody_backtrack_budget.
-            E.g., if submelody_backtrack_budget is 4, the backtrack length can be 1, 2, 3, or 4.
-            The probability of each length is according to the powerlaw distribution.
-            """
-            if submelody_backtrack_budget == 0:
-                return 0
-            rng = np.random.default_rng()
-            values = np.arange(1, submelody_backtrack_budget + 2)
-            # power-law weights ~ 1/k^alpha
-            weights = values ** (-alpha)
-            probs = weights / weights.sum()
-
-            return int(rng.choice(values[::-1], p=probs) - 1)
-
         # Task information
         task_len = len(task)
         mask_data = mask_data if mask_data is not None else task
 
-        # Initialize parameters
-        # note_window = _sample_backtrack_length(self.submelody_backtrack_budget)
-        note_window = int(self.submelody_backtrack_budget)
+        # Backtracking window for this melody: Nb ~ Poisson(submelody_backtrack_budget)
+        note_window = self._sample_poisson(self.submelody_backtrack_budget)
         rates, distortions, prog_list, start_inds = self._initialize_deques(note_window)
 
         # Iterate from the start of the sequence to the end
@@ -683,7 +676,7 @@ class GreedyDP_PCFGCompressor(GreedyDPCompressor):
             ``prog_trajs`` is a DataFrame of selected sub-programs,
             ``recon`` is the concatenated reconstruction as a list,
             ``rate`` is the total description length (−log_prob), and
-            ``distortion`` is the total Levenshtein distortion.
+            ``distortion`` is the total Hamming distortion.
         """
         _, _, prog_trajs = self.run_per_task(task, None)
         # Update the results
@@ -1058,8 +1051,8 @@ class GreedyDP_HAGCompressor(GreedyDP_AGCompressor):
         # Task information
         task_len = len(task)
 
-        # Initialize the rates, distortions, and other structures
-        note_window = self.submelody_backtrack_budget
+        # Backtracking window for this melody: Nb ~ Poisson(submelody_backtrack_budget)
+        note_window = self._sample_poisson(self.submelody_backtrack_budget)
         rates = self._construct_deque(note_window + 1, 0)
         distortions = self._construct_deque(note_window + 1, 0)
         prog_list = self._construct_deque(note_window + 1, pd.DataFrame())

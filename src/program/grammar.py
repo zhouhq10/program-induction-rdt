@@ -114,6 +114,7 @@ class Grammar(object):
             "note_note_note->note",
             "note_note_count->note",
             "note_count_note->note",
+            "note_count_count->note",
         ]
 
     # ----- Initialize primitive prior -----

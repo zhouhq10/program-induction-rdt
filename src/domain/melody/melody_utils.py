@@ -31,6 +31,21 @@ from operator import sub, add, mul, truediv
 # Primitive helpers
 # ---------------------------------------------------------------------------
 
+# Size of the note alphabet: notes are 1…NUM_NOTES and steps wrap around.
+# The paper uses 6; change it with :func:`set_num_notes`.
+NUM_NOTES = 6
+
+
+def set_num_notes(n: int) -> None:
+    """Set the size of the note alphabet used by the primitives and priors."""
+    global NUM_NOTES
+    NUM_NOTES = int(n)
+
+
+def log_prob_note() -> float:
+    """Log prior of one note value, uniform over the note alphabet."""
+    return np.log(1 / NUM_NOTES)
+
 def get_sliced_array(array, start, end):
     """Return ``array[start:end]``, or ``False`` if the slice is invalid.
 
@@ -69,31 +84,18 @@ def get_sliced_array_one_side(array, end):
     return array[:end]
 
 
-def single_range(array: np.ndarray, times: int) -> np.ndarray:
-    """Generate an ascending melodic scale from ``array`` with ``times`` steps.
+def single_range(array, times, step=1):
+    """Append ``times`` copies of ``array``, each shifted by ``step`` from the last.
 
-    Starting from ``array``, each successive copy is shifted up by 1 (mod 6,
-    with pitch values in {1,…,6}).  The result concatenates the original
-    sequence with all shifted copies::
-
-        output = [array, array+1, array+2, ..., array+times]   (all mod-6)
-
-    Used by the ``ranges`` primitive to produce ascending scale fragments.
-
-    Args:
-        array: Starting note sequence with values in {1,…,6}.
-        times: Number of additional +1-transposed copies to append.
-
-    Returns:
-        Concatenated array of length ``len(array) * (times + 1)`` with values
-        wrapped into {1,…,6}.
+    Output is ``[array, array+step, ..., array+times*step]`` wrapped into
+    {1,…,NUM_NOTES}.  Used by the ``up``, ``down`` and ``ranges`` primitives.
     """
-    last_array = array
-    all_array = array
-    for _ in range(times):
-        all_array = np.concatenate([all_array, last_array + 1], -1)
-        last_array = last_array + 1
-    return (all_array - 1) % 6 + 1
+    last_array = np.asarray(array)
+    all_array = last_array
+    for _ in range(int(times)):
+        last_array = last_array + step
+        all_array = np.concatenate([all_array, last_array], -1)
+    return (all_array - 1) % NUM_NOTES + 1
 
 
 # ---------------------------------------------------------------------------

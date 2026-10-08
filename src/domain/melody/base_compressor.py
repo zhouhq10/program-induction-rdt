@@ -18,22 +18,22 @@ import pickle
 import numpy as np
 import pandas as pd
 
-import textdistance
 from collections import deque
 from typing import List, Dict, Optional, Tuple
 
 from src.program.router import *
 from src.domain.melody.melody_primitive import *
 from src.program.helpers import power_law_sampler
+from src.domain.melody.melody_utils import log_prob_note
 
 EPS = 1e-6
 
 # Log-probability constants for the memorise primitive:
 #   p(memorise) = 0.25  (probability of the memorise frame type)
 #   p(note_i)   = 1/7   (uniform prior over the 7-token note vocabulary)
-#   p(value_i)  = 1/6   (uniform prior over the 6 note values per position)
+#   p(value_i)  = 1/NUM_NOTES (uniform prior over note values per position),
+#                 see melody_utils.log_prob_note
 log_prob_memorize = np.log(0.25) + np.log(1 / 7)
-log_prob_note = np.log(1 / 6)
 
 
 # ---------------------------------------------------------------------------
@@ -41,18 +41,17 @@ log_prob_note = np.log(1 / 6)
 # ---------------------------------------------------------------------------
 
 
-def _d_levenshtein(gt: np.ndarray, pred: np.ndarray) -> int:
-    """Compute the Levenshtein edit distance between two note sequences.
+def _d_hamming(gt: np.ndarray, pred: np.ndarray) -> int:
+    """Compute the Hamming distance between two equal-length note sequences.
 
     Args:
         gt: Ground-truth note sequence.
-        pred: Predicted (reconstructed) note sequence.
+        pred: Predicted (reconstructed) note sequence of the same length.
 
     Returns:
-        Integer edit distance (number of insertions, deletions, or
-        substitutions needed to transform ``pred`` into ``gt``).
+        Number of positions at which the two sequences differ.
     """
-    return textdistance.levenshtein.distance(pred.tolist(), gt.tolist())
+    return int(np.count_nonzero(np.asarray(gt) != np.asarray(pred)))
 
 
 # ---------------------------------------------------------------------------
@@ -111,7 +110,7 @@ class Compressor:
 
     @staticmethod
     def _comp_subprog_distortion(recon: np.ndarray, subtask: np.ndarray) -> int:
-        """Compute the Levenshtein distortion between a reconstruction and a subtask.
+        """Compute the Hamming distortion between a reconstruction and a subtask.
 
         Truncates both sequences to the shorter of the two lengths before
         comparison, so programs that output shorter sequences are not penalised
@@ -122,10 +121,10 @@ class Compressor:
             subtask: Ground-truth sub-melody segment.
 
         Returns:
-            Levenshtein edit distance on the overlapping prefix.
+            Hamming distance on the overlapping prefix.
         """
         recon_len = min(len(recon), len(subtask))
-        return _d_levenshtein(subtask[:recon_len], recon[:recon_len])
+        return _d_hamming(subtask[:recon_len], recon[:recon_len])
 
     def _comp_subprog_value(
         self,
@@ -203,7 +202,7 @@ class Compressor:
             return [1 / num_note] * num_note
 
         rate = [
-            beta * (log_prob_memorize + log_prob_note * (i + 1)) / (i + 1)
+            beta * (log_prob_memorize + log_prob_note() * (i + 1)) / (i + 1)
             for i in range(num_note)
         ]
         prob = np.exp(np.array(rate))
@@ -241,7 +240,7 @@ class Compressor:
 
         memorized_progs = []
         for i, possi_note in enumerate(possible_notes):
-            log_prog_whole = log_prob_memorize + log_prob_note * sampled_mem_note
+            log_prog_whole = log_prob_memorize + log_prob_note() * sampled_mem_note
             memorized_progs.append(
                 pd.DataFrame(
                     {
@@ -691,7 +690,7 @@ class Compressor:
         Returns:
             ``(num_forgetted_args, error)`` where:
             - ``num_forgetted_args``: actual number of arguments corrupted.
-            - ``error``: total reconstruction error (weighted Levenshtein
+            - ``error``: total reconstruction error (weighted Hamming
               distance) accumulated across all corrupted programs.
         """
         df_progs = progs.copy()

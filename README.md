@@ -2,8 +2,9 @@
 
 This repository contains the simulation code for the paper. We model how humans learn and recall melody sequences using **program induction** under a **rate-distortion** (RD) framework. The model finds symbolic program representations of melodies that trade off description length (rate) against reconstruction error (distortion), using Probabilistic Context-Free Grammars (PCFG), Adaptor Grammars (AG), and Hierarchical Adaptor Grammars (HAG).
 
-> 🎵 **Try the experiment demo:** [**Play the melody-learning task in your browser →**](https://zhouhq10.github.io/program-induction-rdt/chirp-demo/)
-> This is the actual online experiment participants completed (preview mode — no data is saved).
+> 🎵 **Try it in your browser** — [**Hugging Face Space →**](https://huggingface.co/spaces/zhouhq10/program-induction-rdt)
+> - [**Model demo**](https://zhouhq10-program-induction-rdt.static.hf.space/index.html): compress your own melodies into programs, sweep β and watch the library grow.
+> - [**Experiment**](https://zhouhq10-program-induction-rdt.static.hf.space/experiment/index.html): the online melody-learning task participants completed (preview mode — no data is saved).
 
 ---
 
@@ -31,6 +32,8 @@ program-induction-rdt/
 ├── scripts/              # Runnable pipeline scripts
 ├── src/utils/            # Data loading, preprocessing, evaluation helpers
 ├── data/                 # Task stimuli and human data (see data/README.md)
+├── demo/                 # In-browser model demo (Hugging Face Space)
+├── docs/chirp-demo/      # Static copy of the online experiment
 ├── environment.yml       # Conda environment specification
 └── requirements.txt      # Pip-installable dependencies
 ```
@@ -109,6 +112,32 @@ python scripts/4_evaluate.py \
     --curriculum pcfg \
     --task_num 10 \
     --iter_num_per_task 5
+```
+
+---
+
+## Interactive demo
+
+[`demo/`](demo/) is a static website that runs the greedy compressor from `src/` in the
+browser with [Pyodide](https://pyodide.org), so no server is needed. It has three tabs:
+
+- **Explore** — compress melodies with PCFG, AG or HAG, change β and the library
+  parameters, sweep β to trace a rate–distortion curve, and inspect the programs and library.
+- **Tutorial** — the primitives, combinators, rate–distortion objective and libraries.
+- **Bad recorder** — playing a tune from memory as lossy compression: players with
+  increasing β play public-domain tunes (or your own) with more and more wrong notes.
+  This tab uses seven notes (C–B) instead of the experiment's six.
+
+The site also includes the online experiment from [`docs/chirp-demo/`](docs/chirp-demo/)
+under `experiment/`.
+
+```bash
+python demo/recorder.py           # precompute the Bad recorder presets (only after changing them)
+python demo/build.py              # assemble the site into demo/site/
+python -m http.server -d demo/site 8000
+
+# Publish to the Hugging Face Space (once: pip install huggingface_hub && hf auth login)
+python demo/publish_hf.py         # → <your username>/program-induction-rdt
 ```
 
 ---

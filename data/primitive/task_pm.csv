@@ -17,4 +17,4 @@
 15,reverse,note,note,note->note,primitive,1,1,,0,-1.9459101490553135,0,-1.9459101490553135
 16,repeat,note_count,note,note_count->note,primitive,1,1,,0,-1.9459101490553135,0,-1.9459101490553135
 17,concatenate,note_note,note,note_note->note,primitive,1,1,,0,-1.9459101490553135,0,-1.9459101490553135
-18,ranges,note_count,note,note_count->note,primitive,1,1,,0,-1.9459101490553135,0,-1.9459101490553135
+18,ranges,note_count_count,note,note_count_count->note,primitive,1,1,,0,-1.9459101490553135,0,-1.9459101490553135
