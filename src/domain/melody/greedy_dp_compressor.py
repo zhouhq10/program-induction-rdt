@@ -1273,11 +1273,25 @@ class GreedyDP_HAGCompressor(GreedyDP_AGCompressor):
                 distortion_per_task.append(prog_trajs["distortion"].sum())
 
             # Not update the global libaray using the last submelody
+            # update_post_lib overwrites self.lib.production with the global
+            # library and adds len(lib) to history_table on every call, so keep
+            # the local library and count its tables once per melody (as run()
+            # does) instead of once per selected program.
+            local_lib = self.lib.production
+            history_before = dict(self.lib.history_table)
             for j in range(NUM_SUBMELODY - 1):
                 cur_prog_list = progs_per_task[j]
                 for prog_ind in range(len(cur_prog_list)):
                     one_prog = cur_prog_list.iloc[[prog_ind]]
-                    self.lib.update_post_lib(one_prog, self.lib.production)
+                    self.lib.update_post_lib(one_prog, local_lib)
+            for type_string in history_before:
+                self.lib.history_table[type_string] = history_before[
+                    type_string
+                ] + len(
+                    local_lib.query(
+                        f'type_string=="{type_string}" & ctype=="program"'
+                    )
+                )
 
             local_libs.append(loc_libs_per_task)
             global_libs.append(self.lib.global_production)
